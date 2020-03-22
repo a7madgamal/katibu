@@ -1,0 +1,14 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background-color: #343648;
+}
+
+body {
+  font-family: 'Helvetica Neue';
+  margin: 0;
+  max-width: 100vw;
+  padding: 0px;
+}
