@@ -12,25 +12,14 @@ const createAppWindow = () => {
     height: 500,
     x: width / 2 - 500,
     y: height / 2 - 500,
-    // movable: false,
-    // maximizable: false,
-    // closable: false,
-    // focusable: false,
-    // alwaysOnTop: true,
-    // enableLargerThanScreen: true,
-    // opacity: 0.5,
-    // transparent: false,
-    // titleBarStyle: 'hidden',
     frame: false,
-
     webPreferences: {
       nodeIntegration: true,
-      webSecurity: false,
     },
   })
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
 
   return mainWindow
   // mainWindow.on('closed', () => {
@@ -47,20 +36,10 @@ const createSelectWindow = () => {
     height: 200,
     x: width / 2 - 300,
     y: height / 2 - 300,
-    // movable: false,
-    // maximizable: false,
-    // closable: false,
-    // focusable: false,
     alwaysOnTop: true,
-    // enableLargerThanScreen: true,
-    // opacity: 0.5,
-    // transparent: false,
-    // titleBarStyle: 'hidden',
     frame: false,
-
     webPreferences: {
       nodeIntegration: true,
-      webSecurity: false,
     },
   })
 

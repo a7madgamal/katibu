@@ -5,9 +5,9 @@ declare global {
 import sourceMapSupport from 'source-map-support'
 sourceMapSupport.install()
 
-// import electronUnhandled from 'electron-unhandled'
+import electronUnhandled from 'electron-unhandled'
 
-// electronUnhandled({ showDialog: true })
+electronUnhandled({ showDialog: true })
 
 import { app, globalShortcut, ipcMain, BrowserWindow } from 'electron'
 
@@ -24,24 +24,26 @@ import {
 } from '../plugins/git'
 // import { getInfo } from './plugins/jenkins'
 
-import electronDevtoolsInstaller, {
-  REACT_DEVELOPER_TOOLS,
-} from 'electron-devtools-installer'
+// import electronDevtoolsInstaller, {
+//   REACT_DEVELOPER_TOOLS,
+// } from 'electron-devtools-installer'
 import { showNotification } from '../plugins/notifications'
 // @ts-ignore
 import electronTimber from 'electron-timber'
+import { updateChecker } from '../plugins/updateChecker'
 
 const logger = electronTimber.create({ name: 'index' })
 
-require('update-electron-app')()
+// todo: pay $100 for greedy apple to sign the app -.-
+// require('update-electron-app')()
 
 var mainWindow: BrowserWindow
 var selectWindow: BrowserWindow
 
 app.on('ready', () => {
-  electronDevtoolsInstaller(REACT_DEVELOPER_TOOLS)
-    .then(name => logger.log(`REACT_DEVELOPER_TOOLS Added:  ${name}`))
-    .catch(err => logger.error('REACT_DEVELOPER_TOOLS error:', err))
+  // electronDevtoolsInstaller(REACT_DEVELOPER_TOOLS)
+  //   .then(name => logger.log(`REACT_DEVELOPER_TOOLS Added:  ${name}`))
+  //   .catch(err => logger.error('REACT_DEVELOPER_TOOLS error:', err))
 
   mainWindow = createAppWindow()
   selectWindow = createSelectWindow()
@@ -58,6 +60,8 @@ app.on('ready', () => {
   } catch (error) {
     logger.error('registerShortcuts failed!', error)
   }
+
+  updateChecker()
 
   // getInfo()
 })
