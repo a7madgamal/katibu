@@ -33,6 +33,8 @@ import electronTimber from 'electron-timber'
 
 const logger = electronTimber.create({ name: 'index' })
 
+require('update-electron-app')()
+
 var mainWindow: BrowserWindow
 var selectWindow: BrowserWindow
 

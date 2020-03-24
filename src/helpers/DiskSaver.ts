@@ -43,7 +43,7 @@ class DiskSaver {
 
 function readDataFile(filePath: string) {
   const savedOptions = fs.readFileSync(filePath)
-  // logger.log({ savedOptions, filePath })
+  logger.log({ filePath })
 
   return JSON.parse(savedOptions.toString())
 }

@@ -3,6 +3,7 @@
   "productName": "katibu",
   "version": "1.0.0",
   "description": "THE helper tool you need for modern development",
+  "repository": "https://github.com/a7madgamal/katibu",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
@@ -23,6 +24,18 @@
       "packagerConfig": {
         "extendInfo": "Info.plist"
       },
+      "publishers": [
+        {
+          "name": "@electron-forge/publisher-github",
+          "config": {
+            "repository": {
+              "owner": "a7madgamal",
+              "name": "katibu"
+            },
+            "prerelease": true
+          }
+        }
+      ],
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
@@ -101,7 +114,9 @@
     "redux-thunk": "^2.3.0",
     "simple-git": "^1.132.0",
     "source-map-support": "^0.5.16",
-    "ts-loader": "^6.2.1"
+    "ts-loader": "^6.2.2",
+    "universal-user-agent": "5.0.0",
+    "update-electron-app": "^1.5.0"
   },
   "devDependencies": {
     "@electron-forge/cli": "6.0.0-beta.50",
@@ -110,6 +125,7 @@
     "@electron-forge/maker-squirrel": "6.0.0-beta.50",
     "@electron-forge/maker-zip": "6.0.0-beta.50",
     "@electron-forge/plugin-webpack": "6.0.0-beta.50",
+    "@electron-forge/publisher-github": "^6.0.0-beta.50",
     "@marshallofsound/webpack-asset-relocator-loader": "^0.5.0",
     "@types/body-parser": "^1.19.0",
     "@types/electron-devtools-installer": "^2.2.0",
