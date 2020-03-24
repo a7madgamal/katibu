@@ -1,7 +1,7 @@
 {
   "name": "katibu",
   "productName": "katibu",
-  "version": "1.0.0",
+  "version": "0.1.0-alpha",
   "description": "THE helper tool you need for modern development",
   "repository": "https://github.com/a7madgamal/katibu",
   "main": ".webpack/main",
@@ -9,7 +9,7 @@
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "publish": "electron-forge publish",
+    "release": "electron-forge publish",
     "lint:css": "stylelint './src/**/*.tsx'",
     "tsc": "tsc --noEmit"
   },
