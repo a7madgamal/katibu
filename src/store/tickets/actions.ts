@@ -47,7 +47,12 @@ export const fetchTickets = (
 
   try {
     newTickets = await getMyTickets()
-    dispatch({ type: LOADING_JIRA_TICKETS_SUCCESS, payload: newTickets })
+
+    if (newTickets) {
+      dispatch({ type: LOADING_JIRA_TICKETS_SUCCESS, payload: newTickets })
+    } else {
+      dispatch({ type: LOADING_JIRA_TICKETS_FAIL })
+    }
   } catch (error) {
     logger.error('fetchTickets failed', error)
     dispatch({ type: LOADING_JIRA_TICKETS_FAIL })

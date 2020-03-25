@@ -34,6 +34,7 @@ export function ticketsReducer(
         isFetchingTickets: false,
       }
 
+    // todo: handle fail
     case LOADING_JIRA_TICKETS_FAIL:
       return {
         ...state,
