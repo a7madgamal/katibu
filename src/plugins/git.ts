@@ -156,7 +156,11 @@ const getRepoStatus = async (repoPath: string) => {
   return status
 }
 
-const pushCurrentBranch = async (repo: IRepoSetting, forcePush = false) => {
+const pushCurrentBranch = async (
+  repo: IRepoSetting,
+  skipChecks = false,
+  forcePush = false,
+) => {
   const gitRepo = git(okk(repo.path))
 
   const status = await getRepoStatus(repo.path)
@@ -164,7 +168,7 @@ const pushCurrentBranch = async (repo: IRepoSetting, forcePush = false) => {
 
   try {
     await gitRepo.push(okk(repo.remoteName), status.current, {
-      '--no-verify': null,
+      ...(skipChecks ? { '--no-verify': null } : {}),
       ...(forcePush ? { '-f': null } : {}),
     })
   } catch (error) {
@@ -178,15 +182,17 @@ const pushCurrentBranch = async (repo: IRepoSetting, forcePush = false) => {
 const createBranchFromTicketId = async (ticketId: string) => {
   try {
     const newBranchName = await branchNameFromTicketId(ticketId)
-    const repoId = await showRepoSelector()
-    if (!repoId) {
+    const settings = await showRepoSelector()
+    if (!settings) {
       return false
     }
 
     const state = store.getState()
 
     const repo = okk(
-      state.settings.reposList.find(repo => repo.repoId === okk(repoId)),
+      state.settings.reposList.find(
+        repo => repo.repoId === okk(settings.repoId),
+      ),
     )
 
     await createBranch(okk(repo.path), okk(newBranchName))
@@ -292,4 +298,5 @@ export {
   checkoutLocalBranch,
   getRemote,
   getRepoFromPath,
+  getRepoStatus,
 }

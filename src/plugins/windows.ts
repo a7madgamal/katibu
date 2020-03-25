@@ -10,7 +10,7 @@ const createAppWindow = () => {
     // show: false,
     width: 700,
     height: 500,
-    x: width / 2 - 500,
+    x: width / 2 - 700,
     y: height / 2 - 500,
     frame: false,
     webPreferences: {
@@ -32,10 +32,10 @@ const createSelectWindow = () => {
 
   selectWindow = new BrowserWindow({
     show: false,
-    width: 500,
-    height: 200,
+    width: 400,
+    height: 300,
     x: width / 2 - 300,
-    y: height / 2 - 300,
+    y: height / 2 - 400,
     alwaysOnTop: true,
     frame: false,
     webPreferences: {
@@ -57,14 +57,19 @@ const createSelectWindow = () => {
 const showRepoSelector = () => {
   selectWindow.show()
 
-  return new Promise<string>((resolve, reject) => {
-    ipcMain.once('repo-selected', (e, repoId: string) => {
-      resolve(repoId)
-    })
-    ipcMain.once('cancel-select-window', e => {
-      resolve(undefined)
-    })
-  })
+  return new Promise<{ repoId: string; skipChecks: boolean } | false>(
+    (resolve, reject) => {
+      ipcMain.once(
+        'repo-selected',
+        (e, repoId: string, skipChecks: boolean) => {
+          resolve({ repoId, skipChecks })
+        },
+      )
+      ipcMain.once('cancel-select-window', e => {
+        resolve(undefined)
+      })
+    },
+  )
 }
 
 export { createAppWindow, createSelectWindow, showRepoSelector }

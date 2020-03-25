@@ -18,7 +18,6 @@ const BadgeStyle = css`
   justify-content: center;
   flex-shrink: 0;
   flex-grow: 0;
-  /* fontWeight: bold; */
 `
 const ClickableBadgeStyle = css`
   transition: 0.3s;

@@ -27,6 +27,7 @@ const showNotification = (
 
   notification.show()
 
+  return notification
   // {
   // title,
   // body,

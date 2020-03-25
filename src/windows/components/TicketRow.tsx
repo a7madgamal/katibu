@@ -16,14 +16,12 @@ import { updatePR } from '../../plugins/github'
 import { IJiraTicket } from '../../store/tickets/types'
 import { TBranches } from '../../store/branches/types'
 import { ticketUrlFromKey } from '../../plugins/jira'
-import { ISettingsState } from '../../store/settings/types'
 import { TExtendedPullRequest } from '../../types'
 
 interface ITicketRowProps {
   relatedPRs: Array<TExtendedPullRequest>
   relatedBranches: TBranches
   ticketData: IJiraTicket
-  settings: ISettingsState
   fetchData: () => void
 }
 
@@ -31,7 +29,6 @@ const TicketRow: React.FC<ITicketRowProps> = ({
   ticketData,
   relatedBranches,
   relatedPRs,
-  settings,
   fetchData,
 }) => {
   return (

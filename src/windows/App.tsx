@@ -14,6 +14,7 @@ import { Toolbar } from './components/Toolbar'
 import { TicketRow } from './components/TicketRow'
 import { validateSettings } from '../plugins/settings'
 import { RouteComponentProps } from 'react-router'
+import { BadgeStyle } from './components/styles'
 
 const mapState = (state: TAppState) => ({
   tickets: state.tickets,
@@ -103,11 +104,28 @@ const app: React.FC<TAppProps> = ({
               relatedBranches={relatedBranches}
               key={ticketData.key}
               ticketData={ticketData}
-              settings={settings}
               fetchData={() => fetchData(false)}
             />
           )
         })}
+
+      <div
+        css={css`
+          color: white;
+          font-size: 10px;
+          position: fixed;
+          bottom: 5px;
+          right: 5px;
+          text-align: right;
+        `}
+      >
+        <div>
+          <span css={BadgeStyle}>Ctrl + z</span> to show this window
+        </div>
+        <div>
+          <span css={BadgeStyle}>Cmd + shift + up</span> to open push dialogue
+        </div>
+      </div>
     </div>
   )
 }

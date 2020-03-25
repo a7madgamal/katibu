@@ -12,7 +12,7 @@ electronUnhandled({ showDialog: true })
 import { app, globalShortcut, ipcMain, BrowserWindow } from 'electron'
 
 import { okk } from '../helpers/helpers'
-import { pushTask, forcePushTask } from '../tasks/push'
+import { pushTask } from '../tasks/push'
 import { startServer } from '../plugins/server'
 // import { setContextMenu } from '../plugins/tray'
 import { createAppWindow, createSelectWindow } from '../plugins/windows'
@@ -68,7 +68,6 @@ app.on('ready', () => {
 
 function registerShortcuts() {
   okk(globalShortcut.register('Command+Shift+Up', pushTask))
-  okk(globalShortcut.register('Command+Ctrl+Shift+Up', forcePushTask))
   okk(
     globalShortcut.register('Control+z', () => {
       mainWindow.show()

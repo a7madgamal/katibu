@@ -8,20 +8,27 @@ import { showRepoSelector } from '../plugins/windows'
 
 const pushTask = async () => {
   const state = okk(store.getState())
-  const repoId = await showRepoSelector()
+  const settings = await showRepoSelector()
 
-  if (!repoId) {
+  if (!settings) {
     return
   }
 
   const repo = okk(
-    state.settings.reposList.find(repo => repo.repoId === okk(repoId)),
+    state.settings.reposList.find(repo => repo.repoId === okk(settings.repoId)),
   )
 
   if (repo) {
-    showNotification({ title: 'Pushing...', body: repo.repoId }, true)
+    const pushingNotification = showNotification(
+      {
+        title: `Pushing ${settings.skipChecks ? 'without checks' : ''}...`,
+        body: repo.repoId,
+      },
+      false,
+    )
 
-    const branchName = await pushCurrentBranch(repo)
+    const branchName = await pushCurrentBranch(repo, settings.skipChecks)
+    pushingNotification.close()
 
     if (branchName) {
       showNotification(
@@ -39,12 +46,16 @@ const pushTask = async () => {
     } else {
       showNotification(
         {
-          title: 'cant push 🙀, force?',
+          title: 'push failed 🙀, click to force 💪🏻',
           body: '',
         },
-        true,
+        false,
         async () => {
-          const branchName = await pushCurrentBranch(repo, true)
+          const branchName = await pushCurrentBranch(
+            repo,
+            settings.skipChecks,
+            true,
+          )
 
           if (branchName) {
             showNotification(
@@ -74,33 +85,4 @@ const pushTask = async () => {
   }
 }
 
-const forcePushTask = async () => {
-  const state = okk(store.getState())
-
-  const selectedRepoId = await showRepoSelector()
-
-  const repo = okk(
-    state.settings.reposList.find(repo => repo.repoId === selectedRepoId),
-  )
-
-  repo &&
-    showNotification(
-      { title: 'Force Push?', body: repo.repoId },
-      false,
-      async () => {
-        const branchName = await pushCurrentBranch(repo, true)
-
-        showNotification(
-          { title: 'Force pushed!', body: branchName || '' },
-          false,
-          () => {
-            shell.openExternal(
-              `https://github.com/${repo.orgID}/${repo.repoId}/compare/${branchName}?expand=1`,
-            )
-          },
-        )
-      },
-    )
-}
-
-export { pushTask, forcePushTask }
+export { pushTask }
