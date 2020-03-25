@@ -15,10 +15,11 @@
 | there are checks and they take LONG time and focus, you have to wait for approvals before having a mergable PR. | you get a notification when your PRs are blocked or unblocked that you can click to open the PR. katibu keeps all your tracked PRs updated with master too |
 | you FINALLY merge the damn PR, you delete the remote branch, switch to master, remove the local branch, you fail, you try again with force and only then you are finally done with this ticket! | katibu tracks any changes to remote branches, when a remote branch is deleted you get a notification to delete the local branch, you click it and it's gone (and another one if force is needed) and BOOM! you're on updated master again ready to roll.|
 
+## download (still alpha, please report any issues)
+- macos: https://github.com/a7madgamal/katibu/releases
 
-# very early alpha, macos build and better help coming soon. for now just run `yarn` then `yarn start` to test drive it. 
-
-feel free to reach out about issues or suggestions.
+## development
+- run `yarn` then `yarn start` to test drive it. 
 
 ## so, what does katibu means?
 - it means `secretary` in swahili. I'm actually from Egypt but I liked the word 🤷🏻‍♂️
