@@ -104,7 +104,7 @@ export const fetchPRs = (
 
   try {
     for (const repo of state.settings.reposList) {
-      if (repo.shouldMonitor) {
+      if (repo.enableAutoRefresh) {
         const pulls = await getMyExtendedPRs(repo.repoId)
         allPRs = [...allPRs, ...pulls]
       }

@@ -23,7 +23,7 @@ export const fetchBranches = (): ThunkAction<
   let newBranches: TBranches = []
 
   for (const repo of state.settings.reposList) {
-    if (!repo.shouldMonitor) {
+    if (!repo.enableAutoRefresh) {
       continue
     }
 

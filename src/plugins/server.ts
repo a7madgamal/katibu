@@ -117,9 +117,9 @@ const startServer = () => {
   })
   const state = store.getState()
 
-  app.listen(okk(state.settings.port), () =>
-    logger.log(` server listening on port ${state.settings.port}!`),
-  )
+  // app.listen(okk(state.settings.port), () =>
+  //   logger.log(` server listening on port ${state.settings.port}!`),
+  // )
 }
 
 export { startServer }

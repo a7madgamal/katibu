@@ -5,12 +5,12 @@ export interface IRepoSetting {
   remoteName: string
   repoId: string
   orgID: string
-  shouldMonitor: boolean
+  enableAutoRefresh: boolean
 }
 
 export interface ISettingsState {
   reposList: Array<IRepoSetting>
-  port: number
+  // port: number
   githubAuth: string
   githubUserName: string
   jiraHost: string

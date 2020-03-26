@@ -1,9 +1,7 @@
 import { settingsStore } from '../../plugins/settings'
 import { SAVE_SETTINGS, ISettingsState, TSettingsActionTypes } from './types'
-// @ts-ignore
-import electronTimber from 'electron-timber'
-
-const logger = electronTimber.create({ name: 'reducers' })
+// import electronTimber from 'electron-timber'
+// const logger = electronTimber.create({ name: 'reducers' })
 
 const initialState: ISettingsState = settingsStore.getAll()
 

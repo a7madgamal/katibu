@@ -40,4 +40,34 @@ const Error = styled.span`
   color: red;
 `
 
-export { BadgeStyle, ClickableBadgeStyle, TextFieldWrapper, Error }
+const textColor = '#cacaca'
+const settingLinkColor = '#8bc34a'
+
+const Label = styled.label`
+  font-size: 13px;
+  margin-bottom: 2px;
+  color: ${textColor};
+`
+
+const SupportLink = styled.span`
+  margin-left: 10px;
+  display: inline;
+  cursor: pointer;
+  font-size: 13px;
+  color: ${settingLinkColor};
+
+  :hover {
+    color: white;
+  }
+`
+
+export {
+  BadgeStyle,
+  ClickableBadgeStyle,
+  TextFieldWrapper,
+  Error,
+  Label,
+  SupportLink,
+  textColor,
+  settingLinkColor,
+}

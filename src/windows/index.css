@@ -3,12 +3,9 @@
 }
 
 html {
-  background-color: #343648;
+  background-color: #181921;
 }
 
 body {
-  font-family: 'Helvetica Neue';
-  margin: 0;
-  max-width: 100vw;
-  padding: 0px;
+  font-family: monospace;
 }

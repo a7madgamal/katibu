@@ -13,7 +13,6 @@ import { app, globalShortcut, ipcMain, BrowserWindow } from 'electron'
 
 import { okk } from '../helpers/helpers'
 import { pushTask } from '../tasks/push'
-import { startServer } from '../plugins/server'
 // import { setContextMenu } from '../plugins/tray'
 import { createAppWindow, createSelectWindow } from '../plugins/windows'
 import {
@@ -49,11 +48,12 @@ app.on('ready', () => {
   selectWindow = createSelectWindow()
   // setContextMenu()
 
-  try {
-    startServer()
-  } catch (error) {
-    logger.error('startServer failed!', error)
-  }
+  // todo: enable with port
+  // try {
+  //   startServer()
+  // } catch (error) {
+  //   logger.error('startServer failed!', error)
+  // }
 
   try {
     registerShortcuts()

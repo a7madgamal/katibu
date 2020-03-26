@@ -13,7 +13,13 @@ import css from '@emotion/css'
 import { shell } from 'electron'
 import { folderPicker } from '../../plugins/dialogs'
 import { getRepoFromPath, getRemote } from '../../plugins/git'
-import { TextFieldWrapper, Error } from '../components/styles'
+import {
+  TextFieldWrapper,
+  Error,
+  Label,
+  SupportLink,
+  textColor,
+} from '../components/styles'
 
 const mapState = (state: TAppState) => ({
   settings: state.settings,
@@ -37,9 +43,8 @@ const settings: React.FC<TProps> = ({ settings, saveSettingsAction }) => (
     <Link
       to="/"
       css={css`
-        padding: 10px;
+        position: fixed;
         color: white;
-        position: absolute;
         right: 20px;
       `}
     >
@@ -55,9 +60,9 @@ const settings: React.FC<TProps> = ({ settings, saveSettingsAction }) => (
       }}
       validate={values => {
         const errors: any = {}
-        if (!values.port) {
-          errors.port = 'Required'
-        }
+        // if (!values.port) {
+        //   errors.port = 'Required'
+        // }
         if (!values.githubAuth) {
           errors.githubAuth = 'Required'
         }
@@ -97,32 +102,33 @@ const settings: React.FC<TProps> = ({ settings, saveSettingsAction }) => (
         return errors
       }}
       render={({ handleSubmit, pristine, invalid, form }) => (
-        <form onSubmit={handleSubmit}>
-          <h2>Settings:</h2>
-
-          <Field name="port">
-            {({ input, meta }) => (
-              <TextFieldWrapper>
-                <label>Server Port:</label>
-                <input
-                  {...input}
-                  type="text"
-                  placeholder="3456"
-                  css={css`
-                    width: 60px;
-                  `}
-                />
-
-                {meta.error && meta.touched && <Error>{meta.error}</Error>}
-              </TextFieldWrapper>
-            )}
-          </Field>
-
+        <form
+          onSubmit={handleSubmit}
+          css={css`
+            margin: auto;
+            width: fit-content;
+          `}
+        >
+          <h1
+            css={css`
+              margin: 0;
+              color: ${textColor};
+            `}
+          >
+            Settings:
+          </h1>
           <Field name="githubUserName">
             {({ input, meta }) => (
               <TextFieldWrapper>
-                <label>Github Username:</label>
-                <input {...input} type="text" />
+                <Label>github username:</Label>
+                <input
+                  {...input}
+                  css={css`
+                    width: 150px;
+                  `}
+                  type="text"
+                  placeholder="a7madgamal"
+                />
 
                 {meta.error && meta.touched && <Error>{meta.error}</Error>}
               </TextFieldWrapper>
@@ -132,48 +138,59 @@ const settings: React.FC<TProps> = ({ settings, saveSettingsAction }) => (
           <Field name="githubAuth">
             {({ input, meta }) => (
               <TextFieldWrapper>
-                <label>Github auth:</label>
-                <input {...input} type="text" />
-                <span
-                  onClick={() =>
-                    shell.openExternal('https://github.com/settings/tokens')
-                  }
-                >
-                  https://github.com/settings/tokens
-                </span>
+                <Label>
+                  github auth:
+                  <SupportLink
+                    onClick={() =>
+                      shell.openExternal('https://github.com/settings/tokens')
+                    }
+                  >
+                    generate
+                  </SupportLink>
+                </Label>
+
+                <input
+                  {...input}
+                  css={css`
+                    width: 300px;
+                  `}
+                  type="text"
+                  placeholder=""
+                />
 
                 {meta.error && meta.touched && <Error>{meta.error}</Error>}
               </TextFieldWrapper>
             )}
           </Field>
-
           <Field name="jiraHost">
             {({ input, meta }) => (
               <TextFieldWrapper>
-                <label>Jira host: (xxx.atlassian.net)</label>
-                <input {...input} type="text" />
+                <Label>Jira host:</Label>
+                <input
+                  {...input}
+                  css={css`
+                    width: 200px;
+                  `}
+                  type="text"
+                  placeholder="xxx.atlassian.net"
+                />
 
                 {meta.error && meta.touched && <Error>{meta.error}</Error>}
               </TextFieldWrapper>
             )}
           </Field>
-
           <Field name="jiraEmail">
             {({ input, meta }) => (
               <TextFieldWrapper>
-                <label>Jira Email:</label>
-                <input {...input} type="text" />
-
-                {meta.error && meta.touched && <Error>{meta.error}</Error>}
-              </TextFieldWrapper>
-            )}
-          </Field>
-
-          <Field name="jiraJQL">
-            {({ input, meta }) => (
-              <TextFieldWrapper>
-                <label>Jira JQL query:</label>
-                <input {...input} type="text" />
+                <Label>Jira Email:</Label>
+                <input
+                  {...input}
+                  css={css`
+                    width: 200px;
+                  `}
+                  type="text"
+                  placeholder="you@yourLoginEmailForJira.com"
+                />
 
                 {meta.error && meta.touched && <Error>{meta.error}</Error>}
               </TextFieldWrapper>
@@ -183,26 +200,70 @@ const settings: React.FC<TProps> = ({ settings, saveSettingsAction }) => (
           <Field name="jiraAuth">
             {({ input, meta }) => (
               <TextFieldWrapper>
-                <label>Jira Auth: </label>
-                <input {...input} type="text" />
+                <Label>
+                  Jira Auth:
+                  <SupportLink
+                    onClick={() =>
+                      shell.openExternal(
+                        'https://id.atlassian.com/manage/api-tokens',
+                      )
+                    }
+                  >
+                    generate
+                  </SupportLink>
+                </Label>
+                <input
+                  {...input}
+                  css={css`
+                    width: 300px;
+                  `}
+                  type="text"
+                />
 
-                <span
-                  onClick={() =>
-                    shell.openExternal(
-                      'https://id.atlassian.com/manage/api-tokens',
-                    )
-                  }
-                >
-                  https://id.atlassian.com/manage/api-tokens
-                </span>
                 {meta.error && meta.touched && <Error>{meta.error}</Error>}
               </TextFieldWrapper>
             )}
           </Field>
 
-          <h2>
-            Repos
+          <Field name="jiraJQL">
+            {({ input, meta }) => (
+              <TextFieldWrapper>
+                <Label>
+                  Jira JQL query:
+                  <SupportLink
+                    onClick={() =>
+                      shell.openExternal(
+                        'https://www.atlassian.com/software/jira/guides/expand-jira/jql',
+                      )
+                    }
+                  >
+                    learn more
+                  </SupportLink>
+                </Label>
+                <input
+                  {...input}
+                  css={css`
+                    width: 500px;
+                  `}
+                  type="text"
+                />
+
+                {meta.error && meta.touched && <Error>{meta.error}</Error>}
+              </TextFieldWrapper>
+            )}
+          </Field>
+
+          <h1
+            css={css`
+              margin: 0;
+              color: ${textColor};
+            `}
+          >
+            repos:
             <button
+              css={css`
+                margin-left: 20px;
+              `}
               type="button"
               onClick={async () => {
                 const folder = await folderPicker()
@@ -217,6 +278,7 @@ const settings: React.FC<TProps> = ({ settings, saveSettingsAction }) => (
                         orgID: remote.orgID,
                         remoteName: remote.remoteName,
                         repoId: remote.repoId,
+                        enableAutoRefresh: true,
                       })
                     } else {
                       alert("couldn't get git remote details")
@@ -227,85 +289,154 @@ const settings: React.FC<TProps> = ({ settings, saveSettingsAction }) => (
                 }
               }}
             >
-              +
+              Add a local repo
             </button>
-          </h2>
+          </h1>
+
           <FieldArray name="reposList">
             {({ fields }) =>
               fields.map((fieldKey, index) => (
                 <div
                   key={fieldKey}
                   css={css`
+                    position: relative;
                     margin: 5px;
                     border: 1px solid #ddd;
                     padding: 5px;
                   `}
                 >
-                  <Field
-                    disabled={true}
-                    name={`${fieldKey}.path`}
-                    component="input"
-                    placeholder="/abs/repo/path"
-                    css={css`
-                      width: 400px;
-                    `}
-                  />
-                  <br />
-
-                  <Field
-                    disabled={true}
-                    name={`${fieldKey}.orgID`}
-                    component="input"
-                    placeholder="owner or orgID"
-                    css={css`
-                      width: 100px;
-                    `}
-                  />
-                  <br />
-
-                  <Field
-                    disabled={true}
-                    name={`${fieldKey}.repoId`}
-                    component="input"
-                    placeholder="repo ID"
-                    css={css`
-                      width: 200px;
-                    `}
-                  />
-                  <br />
-                  <Field
-                    disabled={true}
-                    name={`${fieldKey}.remoteName`}
-                    component="input"
-                    placeholder="remote name"
-                    css={css`
-                      width: 100px;
-                    `}
-                  />
-                  <br />
-
-                  <label htmlFor={`${fieldKey}.shouldMonitor`}>
-                    should Monitor
-                  </label>
-
-                  <Field
-                    name={`${fieldKey}.shouldMonitor`}
-                    id={`${fieldKey}.shouldMonitor`}
-                    type="checkbox"
-                    component="input"
-                  />
-
                   <span
                     onClick={() => fields.remove(index)}
-                    style={{ cursor: 'pointer' }}
+                    css={css`
+                      cursor: pointer;
+                      position: absolute;
+                      right: 0;
+                      top: 0;
+                    `}
                   >
                     ❌
                   </span>
+                  <Field name={`${fieldKey}.path`}>
+                    {({ input, meta }) => (
+                      <TextFieldWrapper>
+                        <Label>Path:</Label>
+                        <input {...input} disabled={true} type="text" />
+
+                        {meta.error && meta.touched && (
+                          <Error>{meta.error}</Error>
+                        )}
+                      </TextFieldWrapper>
+                    )}
+                  </Field>
+
+                  <Field name={`${fieldKey}.orgID`}>
+                    {({ input, meta }) => (
+                      <span
+                        css={css`
+                          margin-left: 10px;
+                        `}
+                      >
+                        <Label>owner:</Label>
+                        <input
+                          {...input}
+                          disabled={true}
+                          css={css`
+                            width: 100px;
+                            background-color: gray;
+                            border: 0;
+                          `}
+                          type="text"
+                        />
+
+                        {meta.error && meta.touched && (
+                          <Error>{meta.error}</Error>
+                        )}
+                      </span>
+                    )}
+                  </Field>
+
+                  <Field name={`${fieldKey}.repoId`}>
+                    {({ input, meta }) => (
+                      <span>
+                        <Label>repo:</Label>
+                        <input
+                          {...input}
+                          disabled={true}
+                          css={css`
+                            width: 100px;
+                            background-color: gray;
+                            border: 0;
+                          `}
+                          type="text"
+                        />
+
+                        {meta.error && meta.touched && (
+                          <Error>{meta.error}</Error>
+                        )}
+                      </span>
+                    )}
+                  </Field>
+
+                  <Field name={`${fieldKey}.remoteName`}>
+                    {({ input, meta }) => (
+                      <span>
+                        <Label>remote:</Label>
+                        <input
+                          {...input}
+                          disabled={true}
+                          css={css`
+                            width: 40px;
+                            background-color: gray;
+                            border: 0;
+                          `}
+                          type="text"
+                        />
+
+                        {meta.error && meta.touched && (
+                          <Error>{meta.error}</Error>
+                        )}
+                      </span>
+                    )}
+                  </Field>
+
+                  <Field name={`${fieldKey}.enableAutoRefresh`}>
+                    {({ input }) => {
+                      console.log(input.value, input.checked)
+
+                      return (
+                        <div>
+                          <input
+                            {...input}
+                            {...(input.value ? { checked: true } : {})}
+                            css={css`
+                              display: inline;
+                            `}
+                            type="checkbox"
+                          />
+                          <Label
+                            css={css`
+                              display: inline;
+                            `}
+                          >
+                            enable auto-refresh:
+                          </Label>
+                        </div>
+                      )
+                    }}
+                  </Field>
                 </div>
               ))
             }
           </FieldArray>
-          <button type="submit" disabled={pristine || invalid}>
+
+          <button
+            type="submit"
+            disabled={pristine || invalid}
+            css={css`
+              margin-top: 20px;
+              font-size: 18px;
+            `}
+          >
             Save
           </button>
         </form>

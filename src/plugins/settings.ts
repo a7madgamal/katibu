@@ -3,13 +3,13 @@ import { ISettingsState, IRepoSetting } from '../store/settings/types'
 
 const INITIAL_SETTINGS: ISettingsState = {
   reposList: [],
-  port: 3456,
+  // port: 3456,
   githubAuth: '',
   githubUserName: '',
   jiraHost: '',
   jiraEmail: '',
   jiraAuth: '',
-  jiraJQL: '',
+  jiraJQL: 'assignee in (currentUser())',
 }
 
 const validateSettings = (settings: ISettingsState) => {
@@ -20,7 +20,7 @@ const validateSettings = (settings: ISettingsState) => {
     settings.jiraEmail &&
     settings.jiraHost &&
     settings.jiraJQL &&
-    settings.port &&
+    // settings.port &&
     settings.reposList.length &&
     settings.reposList.reduce(
       (prev, current: IRepoSetting) =>
