@@ -2,23 +2,18 @@ import { shell } from 'electron'
 
 import { showNotification } from '../plugins/notifications'
 import { pushBranch } from '../plugins/git'
-import { store } from '../store'
-import { okk } from '../helpers/helpers'
+import { getRepoSettingsFromId } from '../store'
 
 const pushTask = async ({
   repoId,
   skipChecks,
   branchName,
 }: {
-  repoId?: string
+  repoId: string
   skipChecks?: boolean
   branchName?: string
 }) => {
-  const state = okk(store.getState())
-
-  const repo = okk(
-    state.settings.reposList.find(repo => repo.repoId === okk(repoId)),
-  )
+  const repo = getRepoSettingsFromId(repoId)
 
   if (repo) {
     const pushingNotification = showNotification(

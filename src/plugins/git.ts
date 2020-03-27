@@ -1,7 +1,7 @@
 import * as git from 'simple-git/promise'
 
 import { okk } from '../helpers/helpers'
-import { store } from '../store'
+import { getRepoSettingsFromId } from '../store'
 import { showRepoSelector } from './windows'
 import { branchNameFromTicketId } from './jira'
 import { showNotification } from './notifications'
@@ -12,57 +12,60 @@ import electronTimber from 'electron-timber'
 
 const logger = electronTimber.create({ name: 'git' })
 
+const getGitRepoFromId = async (repoId: string) => {
+  const repo = getRepoSettingsFromId(repoId)
+
+  const gitRepo = git(okk(repo.path))
+  return gitRepo
+}
+
 const deleteBranch = async (
   repoId: string,
   branchName: string,
   isRemote: boolean,
   force: boolean,
-) => {
-  const state = store.getState()
+): Promise<boolean> => {
+  const repoSettings = getRepoSettingsFromId(repoId)
 
-  const repo = state.settings.reposList.find(repo => repo.repoId === repoId)
-
-  if (!repo) {
-    return
-  }
-
-  const gitRepo = git(okk(repo.path))
+  const gitRepo = await getGitRepoFromId(repoId)
 
   if (isRemote) {
     try {
-      await gitRepo.push(okk(repo.remoteName), branchName, { '--delete': null })
+      await gitRepo.push(okk(repoSettings.remoteName), branchName, {
+        '--delete': null,
+      })
+
       showNotification({
         title: 'remote branch deleted',
         body: `${repoId}:${branchName}`,
       })
+
+      return true
     } catch (error) {
       showNotification({
         title: 'failed: remote branch not deleted!',
         body: `${repoId}:${branchName}`,
       })
     }
-    return
+
+    return false
   }
 
+  const status = await getRepoStatus(getRepoSettingsFromId(repoId).path)
+
   try {
-    await gitRepo.checkout('master')
+    if (status.current === branchName) {
+      await gitRepo.checkout('master')
+    }
   } catch (error) {
     showNotification({
       title: 'checkout to master failed',
       body: `${repoId}:${branchName}`,
     })
-    return
+    return false
   }
 
-  const isClean = (await gitRepo.diff()) === ''
 
-  if (!isClean) {
-    showNotification({
-      title: 'branch has some changes',
-      body: `${repoId}:${branchName}`,
-    })
-    return
-  }
 
   if (force) {
     try {
@@ -71,12 +74,14 @@ const deleteBranch = async (
         title: 'force deleted 💪🏻',
         body: `${repoId}:${branchName}`,
       })
+      return true
     } catch (error) {
       logger.error('force delete failed')
       showNotification({
         title: 'force delete failed 😅',
         body: `${repoId}:${branchName}`,
       })
+      return false
     }
   } else {
     try {
@@ -86,6 +91,7 @@ const deleteBranch = async (
           title: 'branch deleted 👍🏻',
           body: `${repoId}:${branchName}`,
         })
+        return false
       } else {
         showNotification(
           {
@@ -97,6 +103,7 @@ const deleteBranch = async (
             deleteBranch(repoId, branchName, isRemote, true)
           },
         )
+        return false
       }
     } catch (error) {
       logger.error('delete failed', error)
@@ -110,28 +117,22 @@ const deleteBranch = async (
           deleteBranch(repoId, branchName, isRemote, true)
         },
       )
+      return false
     }
   }
 }
 
 const getBranches = async (repoId: string) => {
-  const state = store.getState()
+  const repoSettings = getRepoSettingsFromId(repoId)
+  const gitRepo = await getGitRepoFromId(repoId)
 
-  const repo = state.settings.reposList.find(repo => repo.repoId === repoId)
+  await gitRepo.fetch(okk(repoSettings.remoteName), undefined, {
+    '--prune': null,
+  })
 
-  if (repo) {
-    const gitRepo = git(okk(repo.path))
-    await gitRepo.fetch(okk(repo.remoteName), undefined, {
-      '--prune': null,
-    })
+  const branches = await gitRepo.branch()
 
-    const branches = await gitRepo.branch()
-
-    return branches
-  } else {
-    logger.error()
-    return false
-  }
+  return branches
 }
 
 const createBranch = async (
@@ -193,15 +194,10 @@ const createBranchFromTicketId = async (ticketId: string) => {
       return false
     }
 
-    const state = store.getState()
+    const repoSettings = getRepoSettingsFromId(settings.repoId)
 
-    const repo = okk(
-      state.settings.reposList.find(
-        repo => repo.repoId === okk(settings.repoId),
-      ),
-    )
+    await createBranch(okk(repoSettings.path), okk(newBranchName))
 
-    await createBranch(okk(repo.path), okk(newBranchName))
     return true
   } catch (e) {
     logger.error('createBranchFromTicket:', e)
@@ -210,10 +206,7 @@ const createBranchFromTicketId = async (ticketId: string) => {
 }
 
 const rebaseLocalBranch = async (repoId: string, branchName: string) => {
-  const state = store.getState()
-
-  const repo = state.settings.reposList.find(repo => repo.repoId === repoId)
-  const gitRepo = git(okk(repo && repo.path))
+  const gitRepo = await getGitRepoFromId(repoId)
 
   await gitRepo.checkout('master')
   const pullResult = await gitRepo.pull()
@@ -224,13 +217,12 @@ const rebaseLocalBranch = async (repoId: string, branchName: string) => {
 }
 
 const checkoutLocalBranch = async (repoId: string, branchName: string) => {
-  const state = store.getState()
-
-  const repo = state.settings.reposList.find(repo => repo.repoId === repoId)
-  const gitRepo = git(okk(repo && repo.path))
+  const repo = getRepoSettingsFromId(repoId)
+  const gitRepo = git(okk(repo.path))
 
   await gitRepo.checkout(branchName)
 }
+
 type RepoRemote = {
   remoteName: string
   repoId: string
@@ -243,12 +235,9 @@ const getRemote = async (
   let gitRepo: git.SimpleGit
 
   if (typeof repoOrRepoID === 'string') {
-    const state = store.getState()
-    const repo = state.settings.reposList.find(
-      repo => repo.repoId === repoOrRepoID,
-    )
+    const repo = getRepoSettingsFromId(repoOrRepoID)
 
-    gitRepo = git(okk(repo && repo.path))
+    gitRepo = git(okk(repo.path))
   } else {
     gitRepo = repoOrRepoID
   }
@@ -305,4 +294,5 @@ export {
   getRemote,
   getRepoFromPath,
   getRepoStatus,
+  getGitRepoFromId,
 }

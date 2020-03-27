@@ -5,6 +5,8 @@ import { composeWithDevTools } from 'redux-devtools-extension'
 import { settingsReducer } from './settings/reducers'
 import { ticketsReducer } from './tickets/reducers'
 import { branchesReducer } from './branches/reducers'
+import { IRepoSetting } from './settings/types'
+import { okk } from '../helpers/helpers'
 
 const rootReducer = combineReducers({
   settings: settingsReducer,
@@ -19,4 +21,11 @@ const middleWareEnhancer = applyMiddleware(...middlewares)
 
 const store = createStore(rootReducer, composeWithDevTools(middleWareEnhancer))
 
-export { store }
+const getRepoSettingsFromId = (repoId: string) => {
+  const repo = okk(
+    store.getState().settings.reposList.find(repo => repo.repoId === repoId),
+  )
+  return repo
+}
+
+export { store, getRepoSettingsFromId }
