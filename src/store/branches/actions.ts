@@ -15,7 +15,7 @@ import { okk } from '../../helpers/helpers'
 // @ts-ignore
 import electronTimber from 'electron-timber'
 import { IPC_REFRESH_PRS, IPC_REFRESH_GIT } from '../../constants'
-import { mainWindow } from '../../plugins/windows'
+import { ipcRenderer } from 'electron'
 const logger = electronTimber.create({ name: 'branches/actions' })
 
 export const fetchGit = (): ThunkAction<
@@ -92,9 +92,9 @@ export const fetchGit = (): ThunkAction<
 
           const repo = await getGitRepoFromId(oldRemoteBranches[i].repoId)
           await repo.pull()
-
-          mainWindow.webContents.send(IPC_REFRESH_PRS)
-          mainWindow.webContents.send(IPC_REFRESH_GIT)
+          debugger
+          ipcRenderer.send(IPC_REFRESH_PRS)
+          ipcRenderer.send(IPC_REFRESH_GIT)
 
           showNotification(
             {
