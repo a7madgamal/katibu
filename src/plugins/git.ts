@@ -31,15 +31,24 @@ const deleteBranch = async (
 
   if (isRemote) {
     try {
+      const notification = showNotification({
+        title: 'deleting remote branch...',
+        body: `${repoId}:${branchName}`,
+      })
+
       await gitRepo.push(okk(repoSettings.remoteName), branchName, {
         '--delete': null,
       })
 
-      showNotification({
-        title: 'remote branch deleted',
-        body: `${repoId}:${branchName}`,
-      })
+      notification.close()
 
+      showNotification(
+        {
+          title: 'deleted!',
+          body: `${repoId}:${branchName}`,
+        },
+        true,
+      )
       return true
     } catch (error) {
       showNotification({
@@ -64,8 +73,6 @@ const deleteBranch = async (
     })
     return false
   }
-
-
 
   if (force) {
     try {

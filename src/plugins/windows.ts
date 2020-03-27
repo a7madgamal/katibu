@@ -68,4 +68,4 @@ const showRepoSelector = () => {
   })
 }
 
-export { createAppWindow, createSelectWindow, showRepoSelector }
+export { createAppWindow, createSelectWindow, showRepoSelector, mainWindow }
