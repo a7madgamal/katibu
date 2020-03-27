@@ -129,6 +129,7 @@ const generateNewOrCurrentPRLink = ({
   const ticketID = `${branchNameArray
     .shift()
     ?.toUpperCase()}-${branchNameArray.shift()}`
+
   const state = store.getState()
 
   const hasPR =
@@ -140,7 +141,7 @@ const generateNewOrCurrentPRLink = ({
   if (hasPR) {
     return hasPR.html_url
   } else {
-    return `https://github.com/${orgID}/${repoId}/compare/${branchName}?expand=1&title=${ticketID} - ${branchNameArray.join(
+    return `https://github.com/${orgID}/${repoId}/compare/${branchName}?expand=1&title=${ticketID}: ${branchNameArray.join(
       ' ',
     )}`
   }
