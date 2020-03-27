@@ -16,6 +16,7 @@ import { okk } from '../../helpers/helpers'
 import electronTimber from 'electron-timber'
 import { IPC_REFRESH_PRS, IPC_REFRESH_GIT } from '../../constants'
 import { ipcRenderer } from 'electron'
+
 const logger = electronTimber.create({ name: 'branches/actions' })
 
 export const fetchGit = (): ThunkAction<
