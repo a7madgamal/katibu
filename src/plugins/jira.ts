@@ -43,7 +43,6 @@ const getMyTickets: () => Promise<Array<IJiraTicket> | false> = async () => {
       const isBInProgress = issueB.fields.status.name
         .toLowerCase()
         .includes('progress')
-      console.log({ isAInProgress, isBInProgress })
 
       if (
         (isAInProgress && isBInProgress) ||

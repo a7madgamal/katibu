@@ -156,18 +156,24 @@ const getRepoStatus = async (repoPath: string) => {
   return status
 }
 
-const pushCurrentBranch = async (
-  repo: IRepoSetting,
+const pushBranch = async ({
+  repo,
   skipChecks = false,
   forcePush = false,
-) => {
+  branchName = false,
+}: {
+  repo: IRepoSetting
+  skipChecks?: boolean
+  forcePush?: boolean
+  branchName: false | string
+}) => {
   const gitRepo = git(okk(repo.path))
 
   const status = await getRepoStatus(repo.path)
-  const branchName = status.current
+  const selectedBranchName = branchName || status.current
 
   try {
-    await gitRepo.push(okk(repo.remoteName), status.current, {
+    await gitRepo.push(okk(repo.remoteName), selectedBranchName, {
       ...(skipChecks ? { '--no-verify': null } : {}),
       ...(forcePush ? { '-f': null } : {}),
     })
@@ -176,7 +182,7 @@ const pushCurrentBranch = async (
     return false
   }
 
-  return okk(branchName)
+  return okk(selectedBranchName)
 }
 
 const createBranchFromTicketId = async (ticketId: string) => {
@@ -290,7 +296,7 @@ const getRepoFromPath = async (path: string) => {
 
 export {
   createBranch,
-  pushCurrentBranch,
+  pushBranch,
   createBranchFromTicketId,
   getBranches,
   deleteBranch,
