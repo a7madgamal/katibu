@@ -126,10 +126,11 @@ const generateNewOrCurrentPRLink = ({
 }) => {
   const branchNameArray = branchName.split('-')
 
-  const ticketID = `${branchNameArray.shift()}-${branchNameArray
+  const ticketID = `${branchNameArray
     .shift()
-    ?.toUpperCase()}`
+    ?.toUpperCase()}-${branchNameArray.shift()}`
   const state = store.getState()
+
   const hasPR =
     state.tickets.pullRequests &&
     state.tickets.pullRequests.find(pr =>

@@ -49,6 +49,7 @@ const deleteBranch = async (
         },
         true,
       )
+
       return true
     } catch (error) {
       showNotification({

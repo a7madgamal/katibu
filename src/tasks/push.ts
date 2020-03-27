@@ -1,9 +1,6 @@
-import { shell } from 'electron'
-
 import { showNotification } from '../plugins/notifications'
 import { pushBranch } from '../plugins/git'
 import { getRepoSettingsFromId } from '../store'
-import { generateNewOrCurrentPRLink } from '../plugins/github'
 
 const pushTask = async ({
   repoId,
@@ -40,15 +37,6 @@ const pushTask = async ({
           body: result,
         },
         true,
-        () => {
-          shell.openExternal(
-            generateNewOrCurrentPRLink({
-              orgID: repo.orgID,
-              repoId: repo.repoId,
-              branchName: result,
-            }),
-          )
-        },
       )
     } else {
       showNotification(
@@ -72,15 +60,6 @@ const pushTask = async ({
                 body: result,
               },
               true,
-              () => {
-                shell.openExternal(
-                  generateNewOrCurrentPRLink({
-                    orgID: repo.orgID,
-                    repoId: repo.repoId,
-                    branchName: result,
-                  }),
-                )
-              },
             )
           } else {
             showNotification(
