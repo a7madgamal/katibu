@@ -115,11 +115,19 @@ ipcMain.on(
 )
 
 ipcMain.on(IPC_REBASE_BRANCH, async (e, repoId, branchName) => {
-  await rebaseLocalBranch(repoId, branchName)
-  showNotification({
-    title: 'branch rebased',
-    body: `${repoId}:${branchName}`,
-  })
+  try {
+    await rebaseLocalBranch(repoId, branchName)
+    showNotification({
+      title: 'branch rebased',
+      body: `${repoId}:${branchName}`,
+    })
+  } catch (error) {
+    showNotification({
+      title: 'branch rebase failed, fix the conflict',
+      body: `${repoId}:${branchName}`,
+    })
+  }
+
   mainWindow.webContents.send(IPC_REFRESH_GIT)
 })
 
