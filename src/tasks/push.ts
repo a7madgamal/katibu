@@ -1,5 +1,3 @@
-import { shell } from 'electron'
-
 import { showNotification } from '../plugins/notifications'
 import { pushBranch } from '../plugins/git'
 import { getRepoSettingsFromId } from '../store'
@@ -39,11 +37,6 @@ const pushTask = async ({
           body: result,
         },
         true,
-        () => {
-          shell.openExternal(
-            `https://github.com/${repo.orgID}/${repo.repoId}/compare/${result}?expand=1`,
-          )
-        },
       )
     } else {
       showNotification(
@@ -67,11 +60,6 @@ const pushTask = async ({
                 body: result,
               },
               true,
-              () => {
-                shell.openExternal(
-                  `https://github.com/${repo.orgID}/${repo.repoId}/compare/${result}?expand=1`,
-                )
-              },
             )
           } else {
             showNotification(

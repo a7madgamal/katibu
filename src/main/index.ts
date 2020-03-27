@@ -109,11 +109,8 @@ ipcMain.on(
   async (e, repoId: string, branchName: string, isRemote: boolean) => {
     await deleteBranch(repoId, branchName, isRemote, false)
 
-    if (isRemote) {
-      mainWindow.webContents.send(IPC_REFRESH_PRS)
-    } else {
-      mainWindow.webContents.send(IPC_REFRESH_GIT)
-    }
+    mainWindow.webContents.send(IPC_REFRESH_PRS)
+    mainWindow.webContents.send(IPC_REFRESH_GIT)
   },
 )
 

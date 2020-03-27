@@ -115,4 +115,35 @@ const getPR = async (owner: string, repo: string, prNumber: number) => {
 //   })
 // }
 
-export { getPR, getMyExtendedPRs, updatePR }
+const generateNewOrCurrentPRLink = ({
+  orgID,
+  repoId,
+  branchName,
+}: {
+  orgID: string
+  repoId: string
+  branchName: string
+}) => {
+  const branchNameArray = branchName.split('-')
+
+  const ticketID = `${branchNameArray
+    .shift()
+    ?.toUpperCase()}-${branchNameArray.shift()}`
+  const state = store.getState()
+
+  const hasPR =
+    state.tickets.pullRequests &&
+    state.tickets.pullRequests.find(pr =>
+      pr.title.toLowerCase().includes(ticketID.toLowerCase()),
+    )
+
+  if (hasPR) {
+    return hasPR.html_url
+  } else {
+    return `https://github.com/${orgID}/${repoId}/compare/${branchName}?expand=1&title=${ticketID} - ${branchNameArray.join(
+      ' ',
+    )}`
+  }
+}
+
+export { getPR, getMyExtendedPRs, updatePR, generateNewOrCurrentPRLink }
