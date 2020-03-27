@@ -119,12 +119,7 @@ const app: React.FC<TAppProps> = ({
           text-align: right;
         `}
       >
-        <div>
-          <span css={BadgeStyle}>Ctrl + z</span> to show this window
-        </div>
-        <div>
-          <span css={BadgeStyle}>Cmd + shift + up</span> to open push dialogue
-        </div>
+        <span css={BadgeStyle}>Ctrl + z</span> to show this window
       </div>
     </div>
   )

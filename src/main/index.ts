@@ -80,6 +80,8 @@ app.on('ready', () => {
 
 app.on('browser-window-focus', () => {
   mainWindow.webContents.send(IPC_REFRESH_TICKETS)
+  mainWindow.webContents.send(IPC_REFRESH_GIT)
+  mainWindow.webContents.send(IPC_REFRESH_PRS)
 })
 
 function registerShortcuts() {
