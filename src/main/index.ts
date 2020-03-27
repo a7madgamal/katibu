@@ -100,6 +100,17 @@ ipcMain.on('on-rebase-local-branch-click', async (e, repoId, branchName) => {
     body: `${repoId}:${branchName}`,
   })
 })
+ipcMain.on(
+  'on-push-local-branch-click',
+  async (
+    e,
+    repoId: string,
+    skipChecks: boolean,
+    branchName: string | false,
+  ) => {
+    await pushTask(repoId, skipChecks, branchName)
+  },
+)
 
 ipcMain.on('on-checkout-local-branch-click', async (e, repoId, branchName) => {
   await checkoutLocalBranch(repoId, branchName)

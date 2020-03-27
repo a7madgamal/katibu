@@ -8,6 +8,7 @@ import {
   faExchangeAlt,
   faCheckSquare,
   faCloud,
+  faArrowUp,
 } from '@fortawesome/free-solid-svg-icons'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { BadgeStyle, ClickableBadgeStyle } from './styles'
@@ -138,6 +139,24 @@ const TicketRow: React.FC<ITicketRowProps> = ({
                   ipcRenderer.send(
                     'on-rebase-local-branch-click',
                     relatedBranch.repoId,
+                    relatedBranch.name,
+                  )
+                }}
+                css={css`
+                  ${ClickableBadgeStyle}
+                  margin-left: 3px;
+                `}
+              />
+            )}
+
+            {!relatedBranch.isRemote && (
+              <FontAwesomeIcon
+                icon={faArrowUp}
+                onClick={async () => {
+                  ipcRenderer.send(
+                    'on-push-local-branch-click',
+                    relatedBranch.repoId,
+                    true,
                     relatedBranch.name,
                   )
                 }}

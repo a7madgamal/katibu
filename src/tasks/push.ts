@@ -1,45 +1,62 @@
 import { shell } from 'electron'
 
 import { showNotification } from '../plugins/notifications'
-import { pushCurrentBranch } from '../plugins/git'
+import { pushBranch } from '../plugins/git'
 import { store } from '../store'
 import { okk } from '../helpers/helpers'
 import { showRepoSelector } from '../plugins/windows'
 
-const pushTask = async () => {
-  const state = okk(store.getState())
-  const settings = await showRepoSelector()
+const pushTask = async (
+  repoId: false | string = false,
+  skipChecks: boolean = false,
+  branchName: false | string = false,
+) => {
 
-  if (!settings) {
-    return
+  let repoIdTest = repoId
+  let skipChecksTest = skipChecks
+
+  if (!repoIdTest) {
+    const settings = await showRepoSelector()
+
+    if (!settings) {
+      return
+    }
+    repoIdTest = settings.repoId
+    skipChecksTest = settings.skipChecks
   }
 
+  const state = okk(store.getState())
+
   const repo = okk(
-    state.settings.reposList.find(repo => repo.repoId === okk(settings.repoId)),
+    state.settings.reposList.find(repo => repo.repoId === okk(repoIdTest)),
   )
 
   if (repo) {
     const pushingNotification = showNotification(
       {
-        title: `Pushing ${settings.skipChecks ? 'without checks' : ''}...`,
+        title: `Pushing ${skipChecksTest ? 'without checks' : ''}...`,
         body: repo.repoId,
       },
       false,
     )
 
-    const branchName = await pushCurrentBranch(repo, settings.skipChecks)
+    const result = await pushBranch({
+      repo,
+      skipChecks: skipChecksTest,
+      branchName,
+    })
     pushingNotification.close()
 
-    if (branchName) {
+    if (result) {
       showNotification(
         {
           title: 'Pushed!',
-          body: branchName,
+          body: result,
         },
         true,
         () => {
           shell.openExternal(
-            `https://github.com/${repo.orgID}/${repo.repoId}/compare/${branchName}?expand=1`,
+            `https://github.com/${repo.orgID}/${repo.repoId}/compare/${result}?expand=1`,
           )
         },
       )
@@ -51,22 +68,23 @@ const pushTask = async () => {
         },
         false,
         async () => {
-          const branchName = await pushCurrentBranch(
+          const result = await pushBranch({
             repo,
-            settings.skipChecks,
-            true,
-          )
+            skipChecks: skipChecksTest,
+            forcePush: true,
+            branchName,
+          })
 
-          if (branchName) {
+          if (result) {
             showNotification(
               {
                 title: 'Force Pushed!',
-                body: branchName,
+                body: result,
               },
               true,
               () => {
                 shell.openExternal(
-                  `https://github.com/${repo.orgID}/${repo.repoId}/compare/${branchName}?expand=1`,
+                  `https://github.com/${repo.orgID}/${repo.repoId}/compare/${result}?expand=1`,
                 )
               },
             )
