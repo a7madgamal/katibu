@@ -92,7 +92,6 @@ export const fetchGit = (): ThunkAction<
 
           const repo = await getGitRepoFromId(oldRemoteBranches[i].repoId)
           await repo.pull()
-          debugger
           ipcRenderer.send(IPC_REFRESH_PRS)
           ipcRenderer.send(IPC_REFRESH_GIT)
 
