@@ -57,19 +57,14 @@ const createSelectWindow = () => {
 const showRepoSelector = () => {
   selectWindow.show()
 
-  return new Promise<{ repoId: string; skipChecks: boolean } | false>(
-    (resolve, reject) => {
-      ipcMain.once(
-        'repo-selected',
-        (e, repoId: string, skipChecks: boolean) => {
-          resolve({ repoId, skipChecks })
-        },
-      )
-      ipcMain.once('cancel-select-window', e => {
-        resolve(undefined)
-      })
-    },
-  )
+  return new Promise<{ repoId: string } | false>((resolve, reject) => {
+    ipcMain.once('repo-selected', (e, repoId: string) => {
+      resolve({ repoId })
+    })
+    ipcMain.once('cancel-select-window', e => {
+      resolve(undefined)
+    })
+  })
 }
 
 export { createAppWindow, createSelectWindow, showRepoSelector }

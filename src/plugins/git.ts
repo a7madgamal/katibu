@@ -160,12 +160,12 @@ const pushBranch = async ({
   repo,
   skipChecks = false,
   forcePush = false,
-  branchName = false,
+  branchName,
 }: {
   repo: IRepoSetting
   skipChecks?: boolean
   forcePush?: boolean
-  branchName: false | string
+  branchName?: string
 }) => {
   const gitRepo = git(okk(repo.path))
 

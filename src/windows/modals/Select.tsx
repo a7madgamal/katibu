@@ -13,8 +13,6 @@ const connector = connect((state: TAppState) => ({
 type TProps = ConnectedProps<typeof connector>
 
 const select: React.FC<TProps> = ({ settings }) => {
-  const [skipChecks, setSkipChecks] = useState<boolean>(true)
-
   return (
     <div
       css={css`
@@ -42,23 +40,7 @@ const select: React.FC<TProps> = ({ settings }) => {
       >
         x
       </span>
-      <div
-        css={css`
-          cursor: pointer;
-          margin: 5px 0 15px 0;
-          font-size: 13px;
-          color: white;
-        `}
-      >
-        <input
-          type="checkbox"
-          {...(skipChecks ? { checked: true } : {})}
-          onChange={e => {
-            setSkipChecks(e.target.checked)
-          }}
-        ></input>
-        <label>skip checks?</label>
-      </div>
+
       <ul
         css={css`
           cursor: pointer;
@@ -83,7 +65,7 @@ const select: React.FC<TProps> = ({ settings }) => {
             `}
             key={repoId}
             onClick={() => {
-              ipcRenderer.send('repo-selected', repoId, skipChecks)
+              ipcRenderer.send('repo-selected', repoId)
               ipcRenderer.send('hide-select-window')
             }}
           >

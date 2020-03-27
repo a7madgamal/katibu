@@ -4,37 +4,26 @@ import { showNotification } from '../plugins/notifications'
 import { pushBranch } from '../plugins/git'
 import { store } from '../store'
 import { okk } from '../helpers/helpers'
-import { showRepoSelector } from '../plugins/windows'
 
-const pushTask = async (
-  repoId: false | string = false,
-  skipChecks: boolean = false,
-  branchName: false | string = false,
-) => {
-
-  let repoIdTest = repoId
-  let skipChecksTest = skipChecks
-
-  if (!repoIdTest) {
-    const settings = await showRepoSelector()
-
-    if (!settings) {
-      return
-    }
-    repoIdTest = settings.repoId
-    skipChecksTest = settings.skipChecks
-  }
-
+const pushTask = async ({
+  repoId,
+  skipChecks,
+  branchName,
+}: {
+  repoId?: string
+  skipChecks?: boolean
+  branchName?: string
+}) => {
   const state = okk(store.getState())
 
   const repo = okk(
-    state.settings.reposList.find(repo => repo.repoId === okk(repoIdTest)),
+    state.settings.reposList.find(repo => repo.repoId === okk(repoId)),
   )
 
   if (repo) {
     const pushingNotification = showNotification(
       {
-        title: `Pushing ${skipChecksTest ? 'without checks' : ''}...`,
+        title: `Pushing ${skipChecks ? 'without checks' : ''}...`,
         body: repo.repoId,
       },
       false,
@@ -42,9 +31,10 @@ const pushTask = async (
 
     const result = await pushBranch({
       repo,
-      skipChecks: skipChecksTest,
+      skipChecks,
       branchName,
     })
+
     pushingNotification.close()
 
     if (result) {
@@ -70,7 +60,7 @@ const pushTask = async (
         async () => {
           const result = await pushBranch({
             repo,
-            skipChecks: skipChecksTest,
+            skipChecks,
             forcePush: true,
             branchName,
           })

@@ -67,7 +67,6 @@ app.on('ready', () => {
 })
 
 function registerShortcuts() {
-  okk(globalShortcut.register('Command+Shift+Up', pushTask))
   okk(
     globalShortcut.register('Control+z', () => {
       mainWindow.show()
@@ -100,15 +99,14 @@ ipcMain.on('on-rebase-local-branch-click', async (e, repoId, branchName) => {
     body: `${repoId}:${branchName}`,
   })
 })
+
 ipcMain.on(
   'on-push-local-branch-click',
   async (
     e,
-    repoId: string,
-    skipChecks: boolean,
-    branchName: string | false,
+    { repoId, skipChecks, branchName }: Parameters<typeof pushTask>[0],
   ) => {
-    await pushTask(repoId, skipChecks, branchName)
+    await pushTask({ repoId, skipChecks, branchName })
   },
 )
 

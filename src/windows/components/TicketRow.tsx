@@ -13,11 +13,13 @@ import {
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { BadgeStyle, ClickableBadgeStyle } from './styles'
 import { shell, ipcRenderer } from 'electron'
+const { dialog } = require('electron').remote
 import { updatePR } from '../../plugins/github'
 import { IJiraTicket } from '../../store/tickets/types'
 import { TBranches } from '../../store/branches/types'
 import { ticketUrlFromKey } from '../../plugins/jira'
 import { TExtendedPullRequest } from '../../types'
+import { pushTask } from '../../tasks/push'
 
 interface ITicketRowProps {
   relatedPRs: Array<TExtendedPullRequest>
@@ -153,12 +155,20 @@ const TicketRow: React.FC<ITicketRowProps> = ({
               <FontAwesomeIcon
                 icon={faArrowUp}
                 onClick={async () => {
-                  ipcRenderer.send(
-                    'on-push-local-branch-click',
-                    relatedBranch.repoId,
-                    true,
-                    relatedBranch.name,
-                  )
+                  const result = await dialog.showMessageBox({
+                    buttons: ['normal', 'skip checks'],
+                    defaultId: 0,
+                    message: `Push [${relatedBranch.name}]?`,
+                    detail: `${relatedBranch.orgID}:${relatedBranch.repoId}`,
+                  })
+
+                  const options: Parameters<typeof pushTask>[0] = {
+                    repoId: relatedBranch.repoId,
+                    skipChecks: result.response === 1,
+                    branchName: relatedBranch.name,
+                  }
+
+                  ipcRenderer.send('on-push-local-branch-click', options)
                 }}
                 css={css`
                   ${ClickableBadgeStyle}
