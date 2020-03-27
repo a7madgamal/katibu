@@ -55,6 +55,7 @@ export const fetchTickets = (
     }
   } catch (error) {
     logger.error('fetchTickets failed', error)
+
     dispatch({ type: LOADING_JIRA_TICKETS_FAIL })
 
     return

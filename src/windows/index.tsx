@@ -1,3 +1,6 @@
+import sourceMapSupport from 'source-map-support'
+sourceMapSupport.install()
+
 import electronUnhandled from 'electron-unhandled'
 electronUnhandled({ showDialog: true })
 
@@ -16,11 +19,31 @@ import { Select } from './modals/Select'
 import { store } from '../store/index'
 import { ErrorBoundary } from '../ErrorBoundary'
 import { ipcRenderer } from 'electron'
+import { fetchTickets, fetchPRs } from '../store/tickets/actions'
+import { fetchGit } from '../store/branches/actions'
+import {
+  IPC_SELECTOR,
+  IPC_REFRESH_TICKETS,
+  IPC_REFRESH_PRS,
+  IPC_REFRESH_GIT,
+} from '../constants'
 
 const customHistory = createHashHistory()
 
-ipcRenderer.on('navigate_to_selector', event => {
+ipcRenderer.on(IPC_SELECTOR, event => {
   customHistory.replace('/select')
+})
+
+ipcRenderer.on(IPC_REFRESH_TICKETS, event => {
+  fetchTickets(false)(store.dispatch, store.getState, null)
+})
+
+ipcRenderer.on(IPC_REFRESH_PRS, event => {
+  fetchPRs(false)(store.dispatch, store.getState, null)
+})
+
+ipcRenderer.on(IPC_REFRESH_GIT, event => {
+  fetchGit()(store.dispatch, store.getState, null)
 })
 
 render(

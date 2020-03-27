@@ -20,6 +20,13 @@ import { TBranches } from '../../store/branches/types'
 import { ticketUrlFromKey } from '../../plugins/jira'
 import { TExtendedPullRequest } from '../../types'
 import { pushTask } from '../../tasks/push'
+import {
+  IPC_CHECKOUT_LOCAL_BRANCH,
+  IPC_CREATE_BRANCH,
+  IPC_REBASE_BRANCH,
+  IPC_DELETE_BRANCH,
+  IPC_PUSH_BRANCH,
+} from '../../constants'
 
 interface ITicketRowProps {
   relatedPRs: Array<TExtendedPullRequest>
@@ -100,7 +107,7 @@ const TicketRow: React.FC<ITicketRowProps> = ({
                 icon={faCheckSquare}
                 onClick={async () => {
                   ipcRenderer.send(
-                    'on-checkout-local-branch-click',
+                    IPC_CHECKOUT_LOCAL_BRANCH,
                     relatedBranch.repoId,
                     relatedBranch.name,
                   )
@@ -139,7 +146,7 @@ const TicketRow: React.FC<ITicketRowProps> = ({
                 icon={faExchangeAlt}
                 onClick={async () => {
                   ipcRenderer.send(
-                    'on-rebase-local-branch-click',
+                    IPC_REBASE_BRANCH,
                     relatedBranch.repoId,
                     relatedBranch.name,
                   )
@@ -168,7 +175,7 @@ const TicketRow: React.FC<ITicketRowProps> = ({
                     branchName: relatedBranch.name,
                   }
 
-                  ipcRenderer.send('on-push-local-branch-click', options)
+                  ipcRenderer.send(IPC_PUSH_BRANCH, options)
                 }}
                 css={css`
                   ${ClickableBadgeStyle}
@@ -181,7 +188,7 @@ const TicketRow: React.FC<ITicketRowProps> = ({
               icon={faTrashAlt}
               onClick={async () => {
                 ipcRenderer.send(
-                  'on-delete-branch-click',
+                  IPC_DELETE_BRANCH,
                   relatedBranch.repoId,
                   relatedBranch.name,
                   relatedBranch.isRemote,
@@ -197,7 +204,7 @@ const TicketRow: React.FC<ITicketRowProps> = ({
 
         <span
           onClick={async () => {
-            ipcRenderer.send('on-create-branch-click', ticketData.key)
+            ipcRenderer.send(IPC_CREATE_BRANCH, ticketData.key)
           }}
           css={css`
             ${BadgeStyle}
