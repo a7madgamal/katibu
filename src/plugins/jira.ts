@@ -36,8 +36,27 @@ const getMyTickets: () => Promise<Array<IJiraTicket> | false> = async () => {
     })
     // result = await jira.dashboard.getAllDashboards({ startAt: 20 })
     // result = await jira.avatar.getAvatars({ avatarType: 'project' })
+    const sortedIssues = result.issues.sort((issueA, issueB) => {
+      const isAInProgress = issueA.fields.status.name
+        .toLowerCase()
+        .includes('progress')
+      const isBInProgress = issueB.fields.status.name
+        .toLowerCase()
+        .includes('progress')
+      console.log({ isAInProgress, isBInProgress })
 
-    return okk(result.issues)
+      if (
+        (isAInProgress && isBInProgress) ||
+        (!isAInProgress && !isBInProgress)
+      ) {
+        return 0
+      } else if (isAInProgress && !isBInProgress) {
+        return -1
+      } else {
+        return 1
+      }
+    })
+    return okk(sortedIssues)
   } catch (error) {
     logger.error({ error })
     return false
