@@ -208,6 +208,13 @@ const createBranchFromTicketId = async (ticketId: string) => {
     return true
   } catch (e) {
     logger.error('createBranchFromTicket:', e)
+    showNotification(
+      {
+        title: 'failed to create branch.',
+        body: 'make sure you committed all open changes',
+      },
+      true,
+    )
     return false
   }
 }
