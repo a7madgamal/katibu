@@ -1,8 +1,13 @@
 import { Action } from 'redux'
 import { ThunkAction } from 'redux-thunk'
 
-import { getBranches, deleteBranch } from '../../plugins/git'
-import { TAppState } from '..'
+import {
+  getBranches,
+  deleteBranch,
+  checkoutLocalBranch,
+  getGitRepoFromId,
+} from '../../plugins/git'
+import { TAppState, getRepoSettingsFromId } from '..'
 
 import { LOCAL_BRANCHES_UPDATED, TBranches, LOAD_BRANCHES } from './types'
 import { showNotification } from '../../plugins/notifications'
@@ -79,6 +84,19 @@ export const fetchBranches = (): ThunkAction<
             oldRemoteBranches[i].name,
             false,
             false,
+          )
+
+          checkoutLocalBranch(oldRemoteBranches[i].repoId, 'master')
+
+          const repo = await getGitRepoFromId(oldRemoteBranches[i].repoId)
+          await repo.pull()
+
+          showNotification(
+            {
+              title: 'deleted and master updated 🤩',
+              body: oldRemoteBranches[i].name,
+            },
+            true,
           )
         },
       )

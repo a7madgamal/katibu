@@ -1,6 +1,5 @@
-// import electronUnhandled from 'electron-unhandled'
-
-// electronUnhandled({ showDialog: true })
+import electronUnhandled from 'electron-unhandled'
+electronUnhandled({ showDialog: true })
 
 import './index.css'
 import React from 'react'

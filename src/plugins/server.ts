@@ -4,7 +4,7 @@ import { showNotification } from '../plugins/notifications'
 import bodyParser from 'body-parser'
 import express from 'express'
 import { okk } from '../helpers/helpers'
-import { store } from '../store'
+import { store, getRepoSettingsFromId } from '../store'
 // @ts-ignore
 import electronTimber from 'electron-timber'
 
@@ -85,11 +85,7 @@ const startServer = () => {
             const branchName = okk(pull.data.head.ref)
             okk(branchName)
 
-            const state = store.getState()
-
-            const repo = okk(
-              state.settings.reposList.find(repo => repo.repoId === pr.repo),
-            )
+            const repo = getRepoSettingsFromId(pr.repo)
 
             await createBranch(
               repo.path,
