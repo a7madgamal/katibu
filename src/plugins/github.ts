@@ -33,6 +33,7 @@ const getMyPRs = async (repoId: string, options = {}) => {
   const octokit = new Octokit({
     auth: okk(state.settings.githubAuth),
   })
+
   const remote = await getRemote(repoId)
 
   if (!remote) {
