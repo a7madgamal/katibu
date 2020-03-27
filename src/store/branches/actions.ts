@@ -81,27 +81,29 @@ export const fetchGit = (): ThunkAction<
         },
         false,
         async () => {
-          await deleteBranch(
+          const success = await deleteBranch(
             oldRemoteBranches[i].repoId,
             oldRemoteBranches[i].name,
             false,
             false,
           )
 
-          checkoutLocalBranch(oldRemoteBranches[i].repoId, 'master')
+          if (success) {
+            checkoutLocalBranch(oldRemoteBranches[i].repoId, 'master')
 
-          const repo = await getGitRepoFromId(oldRemoteBranches[i].repoId)
-          await repo.pull()
-          ipcRenderer.send(IPC_REFRESH_PRS)
-          ipcRenderer.send(IPC_REFRESH_GIT)
+            const repo = await getGitRepoFromId(oldRemoteBranches[i].repoId)
+            await repo.pull()
+            ipcRenderer.send(IPC_REFRESH_PRS)
+            ipcRenderer.send(IPC_REFRESH_GIT)
 
-          showNotification(
-            {
-              title: 'deleted and master updated 🤩',
-              body: oldRemoteBranches[i].name,
-            },
-            true,
-          )
+            showNotification(
+              {
+                title: 'deleted and master updated 🤩',
+                body: oldRemoteBranches[i].name,
+              },
+              true,
+            )
+          }
         },
       )
     }

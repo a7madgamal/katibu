@@ -250,26 +250,26 @@ const getRemote = async (
   let gitRepo: git.SimpleGit
 
   if (typeof repoOrRepoID === 'string') {
-    const repo = getRepoSettingsFromId(repoOrRepoID)
+    const repoSettings = getRepoSettingsFromId(repoOrRepoID)
 
-    gitRepo = git(okk(repo.path))
+    gitRepo = git(okk(repoSettings.path))
   } else {
     gitRepo = repoOrRepoID
   }
 
-  let remote: RemoteWithRefs[] | false
+  let remotes: RemoteWithRefs[] | false
 
   try {
-    remote = await gitRepo.getRemotes(true)
+    remotes = await gitRepo.getRemotes(true)
   } catch (error) {
     logger.error('getRemote', error)
-    remote = false
+    remotes = false
   }
 
-  if (remote && remote.length) {
-    const remoteName = remote[0].name
+  if (remotes && remotes.length) {
+    const remoteName = remotes[0].name
 
-    const fetchRemote = okk(remote[0].refs.fetch)
+    const fetchRemote = okk(remotes[0].refs.fetch)
 
     const orgID = okk(fetchRemote.split(':')[1].split('/')[0])
 
@@ -282,6 +282,8 @@ const getRemote = async (
 
     return { remoteName, orgID, repoId }
   } else {
+    logger.error('getRemote', 'no remotes!')
+
     return false
   }
 }
