@@ -14,7 +14,7 @@ import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import { BadgeStyle, ClickableBadgeStyle } from './styles'
 import { shell, ipcRenderer } from 'electron'
 const { dialog } = require('electron').remote
-import { updatePR } from '../../plugins/github'
+import { updatePR, generateNewOrCurrentPRLink } from '../../plugins/github'
 import { IJiraTicket } from '../../store/tickets/types'
 import { TBranches } from '../../store/branches/types'
 import { ticketUrlFromKey } from '../../plugins/jira'
@@ -124,14 +124,11 @@ const TicketRow: React.FC<ITicketRowProps> = ({
                 icon={faGithub}
                 onClick={() => {
                   shell.openExternal(
-                    `https://github.com/${relatedBranch.orgID}/${
-                      relatedBranch.repoId
-                    }/compare/${
-                      relatedBranch.name
-                    }?expand=1&title=fix: ${relatedBranch.name.replace(
-                      /-/g,
-                      ' ',
-                    )}`,
+                    generateNewOrCurrentPRLink({
+                      repoId: relatedBranch.repoId,
+                      orgID: relatedBranch.orgID,
+                      branchName: relatedBranch.name,
+                    }),
                   )
                 }}
                 css={css`
