@@ -416,7 +416,7 @@ const settings: React.FC<TProps> = ({ settings, saveSettingsAction }) => (
                               display: inline;
                             `}
                           >
-                            enable auto-refresh
+                            enable auto-refreshkok
                           </Label>
                         </div>
                       )
