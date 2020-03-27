@@ -401,8 +401,6 @@ const settings: React.FC<TProps> = ({ settings, saveSettingsAction }) => (
 
                   <Field name={`${fieldKey}.enableAutoRefresh`}>
                     {({ input }) => {
-                      console.log(input.value, input.checked)
-
                       return (
                         <div>
                           <input

@@ -5,6 +5,11 @@ import { ipcRenderer } from 'electron'
 import { css, jsx } from '@emotion/core'
 import { connect, ConnectedProps } from 'react-redux'
 import { TAppState } from '../../store'
+import {
+  IPC_CANCEL_SELECT,
+  IPC_REPO_SELECT,
+  IPC_HIDE_SELECT,
+} from '../../constants'
 
 const connector = connect((state: TAppState) => ({
   settings: state.settings,
@@ -35,7 +40,7 @@ const select: React.FC<TProps> = ({ settings }) => {
           }
         `}
         onClick={() => {
-          ipcRenderer.send('cancel-select-window')
+          ipcRenderer.send(IPC_CANCEL_SELECT)
         }}
       >
         x
@@ -65,8 +70,8 @@ const select: React.FC<TProps> = ({ settings }) => {
             `}
             key={repoId}
             onClick={() => {
-              ipcRenderer.send('repo-selected', repoId)
-              ipcRenderer.send('hide-select-window')
+              ipcRenderer.send(IPC_REPO_SELECT, repoId)
+              ipcRenderer.send(IPC_HIDE_SELECT)
             }}
           >
             {repoId}

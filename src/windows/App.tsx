@@ -6,7 +6,7 @@ import React, { useEffect } from 'react'
 import { css, jsx } from '@emotion/core'
 
 import { fetchTickets, fetchPRs } from '../store/tickets/actions'
-import { fetchBranches } from '../store/branches/actions'
+import { fetchGit } from '../store/branches/actions'
 
 import { connect, ConnectedProps } from 'react-redux'
 import { TAppState } from '../store'
@@ -25,7 +25,7 @@ const mapState = (state: TAppState) => ({
 const mapDispatch = {
   fetchTicketsAction: fetchTickets,
   fetchPRsAction: fetchPRs,
-  fetchBranchesAction: fetchBranches,
+  fetchGitAction: fetchGit,
 }
 
 const connector = connect(mapState, mapDispatch)
@@ -38,14 +38,14 @@ const app: React.FC<TAppProps> = ({
   settings,
   fetchTicketsAction,
   fetchPRsAction,
-  fetchBranchesAction,
+  fetchGitAction,
   history,
 }) => {
   const fetchData = (isFirstTime: boolean) => {
     if (validateSettings(settings)) {
       fetchTicketsAction(isFirstTime)
       fetchPRsAction(isFirstTime)
-      fetchBranchesAction()
+      fetchGitAction()
     } else {
       history.replace('/settings')
     }
@@ -119,12 +119,7 @@ const app: React.FC<TAppProps> = ({
           text-align: right;
         `}
       >
-        <div>
-          <span css={BadgeStyle}>Ctrl + z</span> to show this window
-        </div>
-        <div>
-          <span css={BadgeStyle}>Cmd + shift + up</span> to open push dialogue
-        </div>
+        <span css={BadgeStyle}>Ctrl + z</span> to show this window
       </div>
     </div>
   )

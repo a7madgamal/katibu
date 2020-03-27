@@ -30,6 +30,18 @@ import { showNotification } from '../plugins/notifications'
 // @ts-ignore
 import electronTimber from 'electron-timber'
 import { updateChecker } from '../plugins/updateChecker'
+import {
+  IPC_CHECKOUT_LOCAL_BRANCH,
+  IPC_CREATE_BRANCH,
+  IPC_REBASE_BRANCH,
+  IPC_DELETE_BRANCH,
+  IPC_PUSH_BRANCH,
+  IPC_CANCEL_SELECT,
+  IPC_HIDE_SELECT,
+  IPC_REFRESH_TICKETS,
+  IPC_REFRESH_GIT,
+  IPC_REFRESH_PRS,
+} from '../constants'
 
 const logger = electronTimber.create({ name: 'index' })
 
@@ -66,6 +78,12 @@ app.on('ready', () => {
   // getInfo()
 })
 
+app.on('browser-window-focus', () => {
+  mainWindow.webContents.send(IPC_REFRESH_TICKETS)
+  mainWindow.webContents.send(IPC_REFRESH_GIT)
+  mainWindow.webContents.send(IPC_REFRESH_PRS)
+})
+
 function registerShortcuts() {
   okk(
     globalShortcut.register('Control+z', () => {
@@ -74,7 +92,7 @@ function registerShortcuts() {
   )
 }
 
-ipcMain.on('on-create-branch-click', async (e, key) => {
+ipcMain.on(IPC_CREATE_BRANCH, async (e, key) => {
   const result = await createBranchFromTicketId(key)
 
   if (result) {
@@ -82,47 +100,56 @@ ipcMain.on('on-create-branch-click', async (e, key) => {
       title: 'branch created',
       body: key,
     })
+    mainWindow.webContents.send(IPC_REFRESH_GIT)
   }
 })
 
 ipcMain.on(
-  'on-delete-branch-click',
+  IPC_DELETE_BRANCH,
   async (e, repoId: string, branchName: string, isRemote: boolean) => {
     await deleteBranch(repoId, branchName, isRemote, false)
+    if (isRemote) {
+      mainWindow.webContents.send(IPC_REFRESH_PRS)
+    } else {
+      mainWindow.webContents.send(IPC_REFRESH_GIT)
+    }
   },
 )
 
-ipcMain.on('on-rebase-local-branch-click', async (e, repoId, branchName) => {
+ipcMain.on(IPC_REBASE_BRANCH, async (e, repoId, branchName) => {
   await rebaseLocalBranch(repoId, branchName)
   showNotification({
     title: 'branch rebased',
     body: `${repoId}:${branchName}`,
   })
+  mainWindow.webContents.send(IPC_REFRESH_GIT)
 })
 
 ipcMain.on(
-  'on-push-local-branch-click',
+  IPC_PUSH_BRANCH,
   async (
     e,
     { repoId, skipChecks, branchName }: Parameters<typeof pushTask>[0],
   ) => {
     await pushTask({ repoId, skipChecks, branchName })
+    mainWindow.webContents.send(IPC_REFRESH_GIT)
   },
 )
 
-ipcMain.on('on-checkout-local-branch-click', async (e, repoId, branchName) => {
+ipcMain.on(IPC_CHECKOUT_LOCAL_BRANCH, async (e, repoId, branchName) => {
   await checkoutLocalBranch(repoId, branchName)
   showNotification({
     title: 'checked out branch',
     body: `${repoId}:${branchName}`,
   })
+  mainWindow.webContents.send(IPC_REFRESH_GIT)
 })
 
-ipcMain.on('hide-select-window', () => {
+ipcMain.on(IPC_HIDE_SELECT, () => {
   selectWindow.hide()
 })
 
-ipcMain.on('cancel-select-window', () => {
+ipcMain.on(IPC_CANCEL_SELECT, () => {
   selectWindow.hide()
 })
 

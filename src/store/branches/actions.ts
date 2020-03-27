@@ -7,7 +7,7 @@ import {
   checkoutLocalBranch,
   getGitRepoFromId,
 } from '../../plugins/git'
-import { TAppState, getRepoSettingsFromId } from '..'
+import { TAppState } from '..'
 
 import { LOCAL_BRANCHES_UPDATED, TBranches, LOAD_BRANCHES } from './types'
 import { showNotification } from '../../plugins/notifications'
@@ -16,7 +16,7 @@ import { okk } from '../../helpers/helpers'
 import electronTimber from 'electron-timber'
 const logger = electronTimber.create({ name: 'branches/actions' })
 
-export const fetchBranches = (): ThunkAction<
+export const fetchGit = (): ThunkAction<
   void,
   TAppState,
   null,
