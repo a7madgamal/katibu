@@ -143,11 +143,20 @@ ipcMain.on(
 )
 
 ipcMain.on(IPC_CHECKOUT_LOCAL_BRANCH, async (e, repoId, branchName) => {
-  await checkoutLocalBranch(repoId, branchName)
-  showNotification({
-    title: 'checked out branch',
-    body: `${repoId}:${branchName}`,
-  })
+  const success = await checkoutLocalBranch(repoId, branchName)
+
+  if (success) {
+    showNotification({
+      title: 'checked out branch',
+      body: `${repoId}:${branchName}`,
+    })
+  } else {
+    showNotification({
+      title: 'failed to checkout branch',
+      body: `${repoId}:${branchName}`,
+    })
+  }
+
   mainWindow.webContents.send(IPC_REFRESH_GIT)
 })
 

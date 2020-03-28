@@ -17,7 +17,7 @@ const pushTask = async ({
     const pushingNotification = showNotification(
       {
         title: `Pushing ${skipChecks ? 'without checks' : ''}...`,
-        body: repo.repoId,
+        body: `[${repo.remoteName}]${repo.orgID}:${repo.repoId}`,
       },
       false,
     )

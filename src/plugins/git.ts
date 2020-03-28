@@ -9,8 +9,6 @@ import { RemoteWithRefs } from 'simple-git/typings/response'
 import { IRepoSetting } from '../store/settings/types'
 // @ts-ignore
 import electronTimber from 'electron-timber'
-import { IPC_REFRESH_PRS, IPC_REFRESH_GIT } from '../constants'
-import { ipcRenderer } from 'electron'
 
 const logger = electronTimber.create({ name: 'git' })
 
@@ -28,7 +26,6 @@ const deleteBranch = async (
   force: boolean,
 ): Promise<boolean> => {
   return new Promise(async (resolve, reject) => {
-
     const repoSettings = getRepoSettingsFromId(repoId)
 
     const gitRepo = await getGitRepoFromId(repoId)
@@ -109,7 +106,7 @@ const deleteBranch = async (
           })
           resolve(true)
         } else {
-          const notification = showNotification(
+          showNotification(
             {
               title: "couldn't delete, force?",
               body: `${repoId}:${branchName}`,
@@ -128,7 +125,7 @@ const deleteBranch = async (
         }
       } catch (error) {
         logger.error('delete caused an error', error)
-        const notification = showNotification(
+        showNotification(
           {
             title: 'something went wrong, force?',
             body: `${repoId}:${branchName}`,
@@ -145,7 +142,6 @@ const deleteBranch = async (
             resolve(result)
           },
         )
-
       }
     }
   })
@@ -255,8 +251,12 @@ const rebaseLocalBranch = async (repoId: string, branchName: string) => {
 const checkoutLocalBranch = async (repoId: string, branchName: string) => {
   const repo = getRepoSettingsFromId(repoId)
   const gitRepo = git(okk(repo.path))
-
-  await gitRepo.checkout(branchName)
+  try {
+    await gitRepo.checkout(branchName)
+    return true
+  } catch (error) {
+    return false
+  }
 }
 
 type RepoRemote = {

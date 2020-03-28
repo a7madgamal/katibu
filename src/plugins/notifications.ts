@@ -8,6 +8,7 @@ const showNotification = (
   onClick?: () => void,
 ) => {
   const notification = new _Notification({
+    silent: true,
     ...options,
     // hasReply: true,
     // actions: [{ type: 'button', text: 'obba' }],
