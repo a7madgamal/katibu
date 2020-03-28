@@ -52,13 +52,13 @@ const settings: React.FC<TProps> = ({ settings, saveSettingsAction }) => (
     </Link>
     <Form
       initialValues={settings}
-      onSubmit={values => {
+      onSubmit={(values) => {
         saveSettingsAction(values)
       }}
       mutators={{
         ...arrayMutators,
       }}
-      validate={values => {
+      validate={(values) => {
         const errors: any = {}
         // if (!values.port) {
         //   errors.port = 'Required'

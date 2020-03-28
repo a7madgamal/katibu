@@ -115,7 +115,7 @@ export const fetchPRs = (
 
     if (!isFirstTime && oldPRs) {
       for (let i = 0; i < allPRs.length; i++) {
-        const oldPR = oldPRs.find(oldPR => oldPR.id == allPRs[i].id)
+        const oldPR = oldPRs.find((oldPR) => oldPR.id == allPRs[i].id)
 
         if (oldPR) {
           if (oldPR.mergeable_state !== allPRs[i].mergeable_state) {

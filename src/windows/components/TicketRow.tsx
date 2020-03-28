@@ -85,7 +85,7 @@ const TicketRow: React.FC<ITicketRowProps> = ({
           {`${ticketData.key} (${ticketData.fields.status.name})`}
         </span>
 
-        {relatedBranches.map(relatedBranch => (
+        {relatedBranches.map((relatedBranch) => (
           <span
             key={`${relatedBranch.repoId}_${relatedBranch.name}_${relatedBranch.isRemote}`}
             css={css`
@@ -233,7 +233,7 @@ const TicketRow: React.FC<ITicketRowProps> = ({
             >
               <span
                 data-id="github-pr-key"
-                onClick={e => shell.openExternal(html_url)}
+                onClick={(e) => shell.openExternal(html_url)}
                 css={css`
                   ${BadgeStyle}
                   ${ClickableBadgeStyle}
@@ -257,7 +257,7 @@ const TicketRow: React.FC<ITicketRowProps> = ({
                       : '#7ABB6B'
                   };
                 `}
-                  onClick={async e => {
+                  onClick={async (e) => {
                     switch (mergeable_state) {
                       case 'behind':
                         await updatePR(head.repo.name, number)

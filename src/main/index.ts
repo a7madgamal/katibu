@@ -177,12 +177,12 @@ app.on('will-quit', () => {
   // expressServer && expressServer.close && expressServer.close()
 })
 
-process.on('unhandledRejection', error => {
+process.on('unhandledRejection', (error) => {
   logger.error('🔴 unhandledRejection', error)
   app.quit()
 })
 
-process.on('uncaughtException', error => {
+process.on('uncaughtException', (error) => {
   logger.error('🔴 uncaughtException', error)
   app.quit()
 })

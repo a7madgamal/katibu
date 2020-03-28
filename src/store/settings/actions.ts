@@ -10,13 +10,10 @@ const logger = electronTimber.create({ name: 'settings/actions' })
 
 export const saveSettings = (
   payload: ISettingsState,
-): ThunkAction<void, TAppState, null, Action<string>> => dispatch => {
+): ThunkAction<void, TAppState, null, Action<string>> => (dispatch) => {
   logger.log('saveSettings', payload)
 
   settingsStore.save(payload)
 
   dispatch({ type: SAVE_SETTINGS, payload })
 }
-
-
-

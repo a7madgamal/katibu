@@ -23,7 +23,7 @@ const store = createStore(rootReducer, composeWithDevTools(middleWareEnhancer))
 
 const getRepoSettingsFromId = (repoId: string) => {
   const repo = okk(
-    store.getState().settings.reposList.find(repo => repo.repoId === repoId),
+    store.getState().settings.reposList.find((repo) => repo.repoId === repoId),
   )
   return repo
 }

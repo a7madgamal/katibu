@@ -53,7 +53,9 @@ const getMyPRs = async (repoId: string, options = {}) => {
     ...options,
   })
 
-  return pulls.filter(pull => pull.user.login === state.settings.githubUserName)
+  return pulls.filter(
+    (pull) => pull.user.login === state.settings.githubUserName,
+  )
 }
 
 const extendPRs = async (repoId: string, pulls: TPullRequest) => {
@@ -141,7 +143,7 @@ const generateNewOrCurrentPRLink = ({
 
   const hasPR =
     state.tickets.pullRequests &&
-    state.tickets.pullRequests.find(pr =>
+    state.tickets.pullRequests.find((pr) =>
       pr.title.toLowerCase().includes(ticketID.toLowerCase()),
     )
 

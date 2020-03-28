@@ -57,22 +57,24 @@ export const fetchGit = (): ThunkAction<
   }
 
   const oldRemoteBranches = state.branches.branches.filter(
-    branch => branch.isRemote,
+    (branch) => branch.isRemote,
   )
 
   const oldLocalBranches = state.branches.branches.filter(
-    branch => !branch.isRemote,
+    (branch) => !branch.isRemote,
   )
 
   for (let i = 0; i < oldRemoteBranches.length; i++) {
     const newBranch = newBranches.find(
-      newBranch =>
+      (newBranch) =>
         newBranch.name === oldRemoteBranches[i].name && newBranch.isRemote,
     )
 
     if (
       !newBranch &&
-      oldLocalBranches.find(branch => branch.name === oldRemoteBranches[i].name)
+      oldLocalBranches.find(
+        (branch) => branch.name === oldRemoteBranches[i].name,
+      )
     ) {
       showNotification(
         {
@@ -89,10 +91,6 @@ export const fetchGit = (): ThunkAction<
           )
 
           if (success) {
-            checkoutLocalBranch(oldRemoteBranches[i].repoId, 'master')
-
-            const repo = await getGitRepoFromId(oldRemoteBranches[i].repoId)
-            await repo.pull()
             ipcRenderer.send(IPC_REFRESH_PRS)
             ipcRenderer.send(IPC_REFRESH_GIT)
 

@@ -11,7 +11,8 @@
     "make": "electron-forge make",
     "release": "electron-forge publish",
     "lint:css": "stylelint './src/**/*.tsx'",
-    "tsc": "tsc --noEmit"
+    "tsc": "tsc --noEmit",
+    "prettier": "prettier --write src"
   },
   "keywords": [],
   "author": {

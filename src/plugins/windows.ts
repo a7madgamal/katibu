@@ -62,7 +62,7 @@ const showRepoSelector = () => {
     ipcMain.once(IPC_REPO_SELECT, (e, repoId: string) => {
       resolve({ repoId })
     })
-    ipcMain.once(IPC_CANCEL_SELECT, e => {
+    ipcMain.once(IPC_CANCEL_SELECT, (e) => {
       resolve(undefined)
     })
   })

@@ -81,10 +81,10 @@ const app: React.FC<TAppProps> = ({
       />
 
       {ticketsData &&
-        ticketsData.map(ticketData => {
+        ticketsData.map((ticketData) => {
           const relatedPRs =
             (pullRequests &&
-              pullRequests.filter(pullRequest =>
+              pullRequests.filter((pullRequest) =>
                 pullRequest.head.ref
                   .toLowerCase()
                   .includes(ticketData.key.toLowerCase()),
@@ -92,7 +92,7 @@ const app: React.FC<TAppProps> = ({
             []
 
           const relatedBranches =
-            branches.branches.filter(branch =>
+            branches.branches.filter((branch) =>
               branch.name
                 .toLowerCase()
                 .startsWith(ticketData.key.toLowerCase()),

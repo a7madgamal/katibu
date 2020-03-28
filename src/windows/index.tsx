@@ -30,19 +30,19 @@ import {
 
 const customHistory = createHashHistory()
 
-ipcRenderer.on(IPC_SELECTOR, event => {
+ipcRenderer.on(IPC_SELECTOR, (event) => {
   customHistory.replace('/select')
 })
 
-ipcRenderer.on(IPC_REFRESH_TICKETS, event => {
+ipcRenderer.on(IPC_REFRESH_TICKETS, (event) => {
   fetchTickets(false)(store.dispatch, store.getState, null)
 })
 
-ipcRenderer.on(IPC_REFRESH_PRS, event => {
+ipcRenderer.on(IPC_REFRESH_PRS, (event) => {
   fetchPRs(false)(store.dispatch, store.getState, null)
 })
 
-ipcRenderer.on(IPC_REFRESH_GIT, event => {
+ipcRenderer.on(IPC_REFRESH_GIT, (event) => {
   fetchGit()(store.dispatch, store.getState, null)
 })
 
