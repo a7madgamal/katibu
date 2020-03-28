@@ -2,13 +2,14 @@ import * as git from 'simple-git/promise'
 
 import { okk } from '../helpers/helpers'
 import { getRepoSettingsFromId } from '../store'
-import { showRepoSelector } from './windows'
+import { showRepoSelector, mainWindow } from './windows'
 import { branchNameFromTicketId } from './jira'
 import { showNotification } from './notifications'
 import { RemoteWithRefs } from 'simple-git/typings/response'
 import { IRepoSetting } from '../store/settings/types'
 // @ts-ignore
 import electronTimber from 'electron-timber'
+import { IPC_REFRESH_PRS, IPC_REFRESH_GIT } from '../constants'
 
 const logger = electronTimber.create({ name: 'git' })
 
@@ -109,6 +110,8 @@ const deleteBranch = async (
           false,
           async () => {
             await deleteBranch(repoId, branchName, isRemote, true)
+            mainWindow.webContents.send(IPC_REFRESH_PRS)
+            mainWindow.webContents.send(IPC_REFRESH_GIT)
           },
         )
         return false
@@ -123,6 +126,8 @@ const deleteBranch = async (
         false,
         async () => {
           await deleteBranch(repoId, branchName, isRemote, true)
+          mainWindow.webContents.send(IPC_REFRESH_PRS)
+          mainWindow.webContents.send(IPC_REFRESH_GIT)
         },
       )
       return false
