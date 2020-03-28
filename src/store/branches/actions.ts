@@ -1,12 +1,7 @@
 import { Action } from 'redux'
 import { ThunkAction } from 'redux-thunk'
 
-import {
-  getBranches,
-  deleteBranch,
-  checkoutLocalBranch,
-  getGitRepoFromId,
-} from '../../plugins/git'
+import { getBranches, deleteBranch } from '../../plugins/git'
 import { TAppState } from '..'
 
 import { LOCAL_BRANCHES_UPDATED, TBranches, LOAD_BRANCHES } from './types'

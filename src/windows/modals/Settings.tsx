@@ -272,6 +272,7 @@ const settings: React.FC<TProps> = ({ settings, saveSettingsAction }) => (
                   const gitRepo = await getRepoFromPath(path)
                   if (gitRepo) {
                     const remote = await getRemote(gitRepo)
+
                     if (remote) {
                       form.mutators.push('reposList', {
                         path,

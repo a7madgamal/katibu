@@ -261,7 +261,6 @@ const TicketRow: React.FC<ITicketRowProps> = ({
                 data-id="github-pr-key"
                 css={css`
                   ${BadgeStyle}
-                  ${ClickableBadgeStyle}
                   background-color: ${
                     mergeable_state === 'behind'
                       ? '#F7BB2F'
@@ -290,11 +289,17 @@ const TicketRow: React.FC<ITicketRowProps> = ({
                 <span
                   onClick={(e) => shell.openExternal(html_url)}
                   css={css`
-                    font-weight: bold;
-                    margin-right: 3px;
+                    cursor: pointer;
                   `}
-                >{`${head.repo.name} #${number}`}</span>
-                {title}
+                >
+                  <span
+                    css={css`
+                      font-weight: bold;
+                      margin-right: 3px;
+                    `}
+                  >{`${head.repo.name} #${number}`}</span>
+                  {title}
+                </span>
               </span>
             </div>
           ),

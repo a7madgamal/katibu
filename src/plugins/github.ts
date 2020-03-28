@@ -1,12 +1,7 @@
 import { Octokit } from '@octokit/rest'
 import { okk } from '../helpers/helpers'
-import { store } from '../store'
+import { store, getRepoSettingsFromId } from '../store'
 import { TPullRequest, TExtendedPullRequest } from '../types'
-import { getRemote } from './git'
-// @ts-ignore
-import electronTimber from 'electron-timber'
-
-const logger = electronTimber.create({ name: 'PLUGIN:github' })
 
 const updatePR = async (repoId: string, pullNumber: number) => {
   const state = store.getState()
@@ -14,17 +9,17 @@ const updatePR = async (repoId: string, pullNumber: number) => {
   const octokit = new Octokit({
     auth: okk(state.settings.githubAuth),
   })
-  const remote = await getRemote(repoId)
 
-  if (remote) {
-    octokit.pulls.updateBranch({
-      owner: remote.orgID,
-      repo: okk(repoId),
-      pull_number: okk(pullNumber),
-    })
-  } else {
-    logger.error('updatePR owner not found', remote)
-  }
+  const repoSettings = getRepoSettingsFromId(repoId)
+
+  octokit.pulls.updateBranch({
+    owner: repoSettings.orgID,
+    repo: okk(repoId),
+    pull_number: okk(pullNumber),
+    headers: {
+      'If-None-Match': '',
+    },
+  })
 }
 
 const getMyPRs = async (repoId: string, options = {}) => {
@@ -34,16 +29,12 @@ const getMyPRs = async (repoId: string, options = {}) => {
     auth: okk(state.settings.githubAuth),
   })
 
-  const remote = await getRemote(repoId)
+  const repoSettings = getRepoSettingsFromId(repoId)
 
-  if (!remote) {
-    logger.error(`getMyPRs couldn't get remote for ${repoId}`)
-    return false
-  }
   // todo: try to filter by user in options
   const { data: pulls } = await octokit.pulls.list({
     repo: okk(repoId),
-    owner: remote.orgID,
+    owner: repoSettings.orgID,
     sort: 'updated',
     direction: 'desc',
     per_page: 500,
@@ -98,7 +89,6 @@ const getPR = async (owner: string, repo: string, prNumber: number) => {
     owner,
     repo,
     pull_number: prNumber,
-
     headers: {
       'If-None-Match': '',
     },

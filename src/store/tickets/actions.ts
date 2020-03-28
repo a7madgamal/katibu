@@ -141,6 +141,7 @@ export const fetchPRs = (
       }
     }
   } catch (error) {
+    logger.error(error)
     dispatch({ type: LOADING_PRS_FAIL })
   }
 }

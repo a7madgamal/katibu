@@ -78,7 +78,11 @@ app.on('ready', () => {
   // getInfo()
 })
 
-app.on('browser-window-focus', () => {
+app.on('browser-window-focus', (e) => {
+  // const creationTime = process.getCreationTime()
+  // const now = new Date().getTime()
+  // const diff = creationTime ? now - Math.round(creationTime) : true
+
   mainWindow.webContents.send(IPC_REFRESH_TICKETS)
   mainWindow.webContents.send(IPC_REFRESH_GIT)
   mainWindow.webContents.send(IPC_REFRESH_PRS)

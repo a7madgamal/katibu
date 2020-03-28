@@ -52,7 +52,7 @@ const app: React.FC<TAppProps> = ({
   }
 
   useEffect(() => {
-    const int = setInterval(fetchData, 1000 * 60 * 2)
+    const int = setInterval(fetchData, 1000 * 60 * 5)
 
     fetchData(true)
 
