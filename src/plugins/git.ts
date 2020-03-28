@@ -10,6 +10,7 @@ import { IRepoSetting } from '../store/settings/types'
 // @ts-ignore
 import electronTimber from 'electron-timber'
 import { IPC_REFRESH_PRS, IPC_REFRESH_GIT } from '../constants'
+import { ipcRenderer } from 'electron'
 
 const logger = electronTimber.create({ name: 'git' })
 
@@ -110,8 +111,8 @@ const deleteBranch = async (
           false,
           async () => {
             await deleteBranch(repoId, branchName, isRemote, true)
-            mainWindow.webContents.send(IPC_REFRESH_PRS)
-            mainWindow.webContents.send(IPC_REFRESH_GIT)
+            ipcRenderer.send(IPC_REFRESH_PRS)
+            ipcRenderer.send(IPC_REFRESH_GIT)
           },
         )
         return false
@@ -126,8 +127,8 @@ const deleteBranch = async (
         false,
         async () => {
           await deleteBranch(repoId, branchName, isRemote, true)
-          mainWindow.webContents.send(IPC_REFRESH_PRS)
-          mainWindow.webContents.send(IPC_REFRESH_GIT)
+          ipcRenderer.send(IPC_REFRESH_PRS)
+          ipcRenderer.send(IPC_REFRESH_GIT)
         },
       )
       return false
@@ -278,12 +279,7 @@ const getRemote = async (
 
     const orgID = okk(fetchRemote.split(':')[1].split('/')[0])
 
-    const repoId = okk(
-      fetchRemote
-        .split(':')[1]
-        .split('/')[1]
-        .split('.')[0],
-    )
+    const repoId = okk(fetchRemote.split(':')[1].split('/')[1].split('.')[0])
 
     return { remoteName, orgID, repoId }
   } else {
