@@ -96,6 +96,7 @@ const getPR = async (owner: string, repo: string, prNumber: number) => {
     owner,
     repo,
     pull_number: prNumber,
+
     headers: {
       'If-None-Match': '',
     },
