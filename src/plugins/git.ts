@@ -269,6 +269,7 @@ const getRemote = async (
     remotes = await gitRepo.getRemotes(true)
   } catch (error) {
     logger.error('getRemote', error)
+
     remotes = false
   }
 
