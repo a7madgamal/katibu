@@ -3,6 +3,18 @@
 import { css, jsx } from '@emotion/core'
 import styled from '@emotion/styled'
 
+const titlesColor = 'aquamarine'
+const ticketInProgressBGColor = '#4285f7'
+const ticketInProgressColor = '#222'
+const ticketInactiveBGColor = '#999'
+const ticketInactiveColor = '#000'
+const actionsColor = '#333'
+const cardsBGColor = '#ddd'
+const activeCardAccentColor = '#aa0000'
+// const remoteCardColor = ''
+// const remoteCardBGColor = ''
+const borderColor = '#bfbfbf'
+
 const BadgeStyle = css`
   font-family: monospace;
   cursor: default;
@@ -22,7 +34,7 @@ const BadgeStyle = css`
 const ClickableBadgeStyle = css`
   transition: 0.3s;
   cursor: pointer;
-  color: whitesmoke;
+  color: ${actionsColor};
   box-shadow: 0px 0px 1px #fff;
 
   :hover {
@@ -70,4 +82,15 @@ export {
   SupportLink,
   textColor,
   settingLinkColor,
+  titlesColor,
+  ticketInProgressColor,
+  ticketInProgressBGColor,
+  ticketInactiveColor,
+  actionsColor,
+  cardsBGColor,
+  activeCardAccentColor,
+  // remoteCardColor,
+  // remoteCardBGColor,
+  borderColor,
+  ticketInactiveBGColor,
 }

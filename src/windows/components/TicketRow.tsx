@@ -11,7 +11,19 @@ import {
   faArrowUp,
 } from '@fortawesome/free-solid-svg-icons'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
-import { BadgeStyle, ClickableBadgeStyle } from './styles'
+import {
+  BadgeStyle,
+  ClickableBadgeStyle,
+  borderColor,
+  ticketInProgressColor,
+  ticketInactiveColor,
+  titlesColor,
+  activeCardAccentColor,
+  cardsBGColor,
+  actionsColor,
+  ticketInactiveBGColor,
+  ticketInProgressBGColor,
+} from './styles'
 import { shell, ipcRenderer } from 'electron'
 const { dialog } = require('electron').remote
 import { updatePR, generateNewOrCurrentPRLink } from '../../plugins/github'
@@ -27,6 +39,7 @@ import {
   IPC_DELETE_BRANCH,
   IPC_PUSH_BRANCH,
 } from '../../constants'
+import { getRepoSettingsFromId } from '../../store'
 
 interface ITicketRowProps {
   relatedPRs: Array<TExtendedPullRequest>
@@ -41,29 +54,21 @@ const TicketRow: React.FC<ITicketRowProps> = ({
   relatedPRs,
   fetchData,
 }) => {
+  const isActiveTicket = ticketData.fields.status.name
+    .toLowerCase()
+    .includes('progress')
+
   return (
     <div
       key={ticketData.id}
       css={css`
-        color: white;
-        margin-bottom: 5px;
+        padding-bottom: 10px;
         display: flex;
         flex-direction: column;
-        border-bottom: 2px solid #bfbfbf;
+        border-bottom: 1px solid ${borderColor};
       `}
     >
-      <span
-        css={css`
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          overflow: hidden;
-          font-size: 12px;
-        `}
-      >
-        {ticketData.fields.summary}
-      </span>
-
-      <div>
+      <div data-qa-id="title row">
         <span
           data-id="jira-ticket-key"
           onClick={() => shell.openExternal(ticketUrlFromKey(ticketData.key))}
@@ -71,36 +76,107 @@ const TicketRow: React.FC<ITicketRowProps> = ({
           ${BadgeStyle}
           ${ClickableBadgeStyle}
           background-color: ${
-            ticketData.fields.status.name.toLowerCase().includes('done')
-              ? 'green'
-              : ticketData.fields.status.name
-                  .toLowerCase()
-                  .includes('backlog') ||
-                ticketData.fields.status.name.toLowerCase().includes('to do')
-              ? 'gray'
-              : '#4285f7'
+            isActiveTicket ? ticketInProgressBGColor : ticketInactiveBGColor
+          };
+          color: ${
+            isActiveTicket ? ticketInProgressColor : ticketInactiveColor
           };
         `}
         >
-          {`${ticketData.key} (${ticketData.fields.status.name})`}
+          <span
+            css={css`
+              font-weight: bold;
+            `}
+          >
+            {ticketData.key}
+          </span>
         </span>
 
+        <span
+          css={css`
+            font-size: 16px;
+            color: ${titlesColor};
+            margin: 5px;
+          `}
+        >
+          {ticketData.fields.summary}
+        </span>
+        <span
+          onClick={async () => {
+            ipcRenderer.send(IPC_CREATE_BRANCH, ticketData.key)
+          }}
+          css={css`
+            ${BadgeStyle}
+            ${ClickableBadgeStyle}
+            color: ${actionsColor};
+            background-color: ${ticketInProgressBGColor};
+          `}
+        >
+          +branch
+        </span>
+      </div>
+
+      <div
+        css={css`
+          display: flex;
+          flex-direction: column;
+        `}
+      >
         {relatedBranches.map((relatedBranch) => (
           <span
             key={`${relatedBranch.repoId}_${relatedBranch.name}_${relatedBranch.isRemote}`}
             css={css`
               ${BadgeStyle}
-              background-color: black;
+              color: ${
+                relatedBranch.isCheckedout
+                  ? activeCardAccentColor
+                  : actionsColor
+              };
+              background-color: ${cardsBGColor};
+              border: ${relatedBranch.isCheckedout ? '1' : '0'}px solid
+                ${relatedBranch.isCheckedout ? activeCardAccentColor : ''};
             `}
           >
             <FontAwesomeIcon
               icon={relatedBranch.isRemote ? faCloud : faHdd}
               css={css`
                 margin-right: 3px;
-                color: ${relatedBranch.isCheckedout ? 'green' : 'white'};
+                color: ${relatedBranch.isCheckedout
+                  ? activeCardAccentColor
+                  : actionsColor};
               `}
             />
-            {`${relatedBranch.repoId}:${relatedBranch.name}`}
+
+            <span
+              css={css`
+                margin-right: 3px;
+                cursor: pointer;
+              `}
+              onClick={() => {
+                if (relatedBranch.isRemote) {
+                  shell.openExternal(
+                    generateNewOrCurrentPRLink({
+                      repoId: relatedBranch.repoId,
+                      orgID: relatedBranch.orgID,
+                      branchName: relatedBranch.name,
+                    }),
+                  )
+                } else {
+                  shell.openExternal(
+                    `vscode://file${
+                      getRepoSettingsFromId(relatedBranch.repoId).path
+                    }`,
+                  )
+                }
+              }}
+            >
+              <span
+                css={css`
+                  font-weight: bold;
+                `}
+              >{`${relatedBranch.repoId}:`}</span>
+              {`${relatedBranch.name}`}
+            </span>
 
             {!relatedBranch.isRemote && !relatedBranch.isCheckedout && (
               <FontAwesomeIcon
@@ -110,25 +186,6 @@ const TicketRow: React.FC<ITicketRowProps> = ({
                     IPC_CHECKOUT_LOCAL_BRANCH,
                     relatedBranch.repoId,
                     relatedBranch.name,
-                  )
-                }}
-                css={css`
-                  ${ClickableBadgeStyle}
-                  margin-left: 3px;
-                `}
-              />
-            )}
-
-            {relatedBranch.isRemote && (
-              <FontAwesomeIcon
-                icon={faGithub}
-                onClick={() => {
-                  shell.openExternal(
-                    generateNewOrCurrentPRLink({
-                      repoId: relatedBranch.repoId,
-                      orgID: relatedBranch.orgID,
-                      branchName: relatedBranch.name,
-                    }),
                   )
                 }}
                 css={css`
@@ -198,65 +255,30 @@ const TicketRow: React.FC<ITicketRowProps> = ({
             />
           </span>
         ))}
-
-        <span
-          onClick={async () => {
-            ipcRenderer.send(IPC_CREATE_BRANCH, ticketData.key)
-          }}
-          css={css`
-            ${BadgeStyle}
-            ${ClickableBadgeStyle}
-            background-color: #000;
-          `}
-        >
-          + branch
-        </span>
       </div>
 
-      <div
-        data-id="github-rows"
-        css={css`
-          display: flex;
-          flex-direction: column;
-          flex-grow: 1;
-        `}
-      >
+      <div data-id="github-rows">
         {relatedPRs.map(
           ({ id, html_url, number, base, head, title, mergeable_state }) => (
-            <div
-              data-id="github-row"
-              key={id}
-              css={css`
-                display: flex;
-                /* border-bottom: red dotted 1px; */
-              `}
-            >
+            <div data-id="github-row" key={id}>
               <span
                 data-id="github-pr-key"
-                onClick={(e) => shell.openExternal(html_url)}
                 css={css`
                   ${BadgeStyle}
                   ${ClickableBadgeStyle}
-                background-color: #000;
-                `}
-              >
-                <FontAwesomeIcon icon={faGithub} />
-                {`#${number} - ${head.repo.name} - ${title}`}
-              </span>
-
-              <div data-id="github-pr-details">
-                <span
-                  data-id="github-pr-state"
-                  css={css`
-                  ${BadgeStyle}
                   background-color: ${
                     mergeable_state === 'behind'
                       ? '#F7BB2F'
                       : mergeable_state === 'blocked'
                       ? '#F32C3E'
-                      : '#7ABB6B'
+                      : mergeable_state === 'clean'
+                      ? '#7ABB6B'
+                      : cardsBGColor
                   };
                 `}
+              >
+                <FontAwesomeIcon
+                  icon={faGithub}
                   onClick={async (e) => {
                     switch (mergeable_state) {
                       case 'behind':
@@ -268,20 +290,19 @@ const TicketRow: React.FC<ITicketRowProps> = ({
                         break
                     }
                   }}
-                >
-                  {/* {pull.state} */}
-                  {mergeable_state}
-                </span>
-              </div>
+                />
+                <span
+                  onClick={(e) => shell.openExternal(html_url)}
+                  css={css`
+                    font-weight: bold;
+                    margin-right: 3px;
+                  `}
+                >{`${head.repo.name} #${number}`}</span>
+                {title}
+              </span>
             </div>
           ),
         )}
-        {/* <span className={css` backgroundColor: #bbb `}>
-    {fields.assignee.displayName}
-  </span> */}
-        {/* <span>{fields.issuetype.name}</span> */}
-        {/* <span>{fields.priority.name}</span> */}
-        {/* <span>{fields.updated}</span> */}
       </div>
     </div>
   )
