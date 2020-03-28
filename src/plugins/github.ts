@@ -47,6 +47,9 @@ const getMyPRs = async (repoId: string, options = {}) => {
     sort: 'updated',
     direction: 'desc',
     per_page: 500,
+    headers: {
+      'If-None-Match': '',
+    },
     ...options,
   })
 
@@ -93,6 +96,9 @@ const getPR = async (owner: string, repo: string, prNumber: number) => {
     owner,
     repo,
     pull_number: prNumber,
+    headers: {
+      'If-None-Match': '',
+    },
   })
 
   return pull
