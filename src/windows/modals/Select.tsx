@@ -31,12 +31,12 @@ const select: React.FC<TProps> = ({ settings }) => {
           cursor: pointer;
           position: fixed;
           right: 8px;
-          font-size: 24px;
-          color: #eee;
+          font-size: 20px;
+          color: #ff4444;
           top: 0px;
 
           :hover {
-            color: #fff;
+            color: #ff0000;
           }
         `}
         onClick={() => {
@@ -49,7 +49,7 @@ const select: React.FC<TProps> = ({ settings }) => {
       <ul
         css={css`
           cursor: pointer;
-          margin: 0;
+          margin: 15px 0 0 0;
           padding: 0;
         `}
       >

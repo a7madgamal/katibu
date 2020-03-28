@@ -27,113 +27,128 @@ const deleteBranch = async (
   isRemote: boolean,
   force: boolean,
 ): Promise<boolean> => {
-  const repoSettings = getRepoSettingsFromId(repoId)
+  return new Promise(async (resolve, reject) => {
 
-  const gitRepo = await getGitRepoFromId(repoId)
+    const repoSettings = getRepoSettingsFromId(repoId)
 
-  if (isRemote) {
-    try {
-      const notification = showNotification({
-        title: 'deleting remote branch...',
-        body: `${repoId}:${branchName}`,
-      })
+    const gitRepo = await getGitRepoFromId(repoId)
 
-      await gitRepo.push(okk(repoSettings.remoteName), branchName, {
-        '--delete': null,
-      })
-
-      notification.close()
-
-      showNotification(
-        {
-          title: 'deleted!',
-          body: `${repoId}:${branchName}`,
-        },
-        true,
-      )
-
-      return true
-    } catch (error) {
-      showNotification({
-        title: 'failed: remote branch not deleted!',
-        body: `${repoId}:${branchName}`,
-      })
-    }
-
-    return false
-  }
-
-  const status = await getRepoStatus(getRepoSettingsFromId(repoId).path)
-
-  try {
-    if (status.current === branchName) {
-      await gitRepo.checkout('master')
-    }
-  } catch (error) {
-    showNotification({
-      title: 'checkout to master failed',
-      body: `${repoId}:${branchName}`,
-    })
-    return false
-  }
-
-  if (force) {
-    try {
-      await gitRepo.raw(['branch', '-D', branchName])
-      showNotification({
-        title: 'force deleted 💪🏻',
-        body: `${repoId}:${branchName}`,
-      })
-      return true
-    } catch (error) {
-      logger.error('force delete failed')
-      showNotification({
-        title: 'force delete failed 😅',
-        body: `${repoId}:${branchName}`,
-      })
-      return false
-    }
-  } else {
-    try {
-      const deleteResult = await gitRepo.deleteLocalBranch(branchName)
-      if (deleteResult.success) {
-        showNotification({
-          title: 'branch deleted 👍🏻',
+    if (isRemote) {
+      try {
+        const notification = showNotification({
+          title: 'deleting remote branch...',
           body: `${repoId}:${branchName}`,
         })
-        return false
-      } else {
+
+        await gitRepo.push(okk(repoSettings.remoteName), branchName, {
+          '--delete': null,
+        })
+
+        notification.close()
+
         showNotification(
           {
-            title: 'failed, force?',
+            title: 'remote branch deleted 👍🏻',
+            body: `${repoId}:${branchName}`,
+          },
+          true,
+        )
+
+        resolve(true)
+      } catch (error) {
+        showNotification({
+          title: "failed: couldn't delete remote 👎🏻",
+          body: `${repoId}:${branchName}`,
+        })
+        resolve(false)
+      }
+      return
+    }
+
+    try {
+      const status = await getRepoStatus(repoSettings.path)
+
+      if (status.current === branchName) {
+        await gitRepo.checkout('master')
+      }
+    } catch (error) {
+      showNotification({
+        title: 'failed to checkout master!',
+        body: `${repoId}:${branchName}`,
+      })
+      resolve(false)
+    }
+
+    if (force) {
+      try {
+        await gitRepo.raw(['branch', '-D', branchName])
+
+        showNotification({
+          title: 'force deleted 💪🏻',
+          body: `${repoId}:${branchName}`,
+        })
+
+        resolve(true)
+      } catch (error) {
+        logger.error('force delete failed')
+        showNotification({
+          title: 'even force delete failed 😅',
+          body: `${repoId}:${branchName}`,
+        })
+
+        resolve(false)
+      }
+    } else {
+      try {
+        const deleteResult = await gitRepo.deleteLocalBranch(branchName)
+
+        if (deleteResult.success) {
+          showNotification({
+            title: 'branch deleted 👍🏻',
+            body: `${repoId}:${branchName}`,
+          })
+          resolve(true)
+        } else {
+          const notification = showNotification(
+            {
+              title: "couldn't delete, force?",
+              body: `${repoId}:${branchName}`,
+            },
+            false,
+            async () => {
+              const result = await deleteBranch(
+                repoId,
+                branchName,
+                isRemote,
+                true,
+              )
+              resolve(result)
+            },
+          )
+        }
+      } catch (error) {
+        logger.error('delete caused an error', error)
+        const notification = showNotification(
+          {
+            title: 'something went wrong, force?',
             body: `${repoId}:${branchName}`,
           },
           false,
           async () => {
-            await deleteBranch(repoId, branchName, isRemote, true)
-            ipcRenderer.send(IPC_REFRESH_PRS)
-            ipcRenderer.send(IPC_REFRESH_GIT)
+            const result = await deleteBranch(
+              repoId,
+              branchName,
+              isRemote,
+              true,
+            )
+
+            resolve(result)
           },
         )
-        return false
+
       }
-    } catch (error) {
-      logger.error('delete failed', error)
-      showNotification(
-        {
-          title: 'failed, force?',
-          body: `${repoId}:${branchName}`,
-        },
-        false,
-        async () => {
-          await deleteBranch(repoId, branchName, isRemote, true)
-          ipcRenderer.send(IPC_REFRESH_PRS)
-          ipcRenderer.send(IPC_REFRESH_GIT)
-        },
-      )
-      return false
     }
-  }
+  })
 }
 
 const getBranches = async (repoId: string) => {

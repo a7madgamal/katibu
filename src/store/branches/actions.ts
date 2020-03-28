@@ -93,14 +93,6 @@ export const fetchGit = (): ThunkAction<
           if (success) {
             ipcRenderer.send(IPC_REFRESH_PRS)
             ipcRenderer.send(IPC_REFRESH_GIT)
-
-            showNotification(
-              {
-                title: 'deleted and master updated 🤩',
-                body: oldRemoteBranches[i].name,
-              },
-              true,
-            )
           }
         },
       )
