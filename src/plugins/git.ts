@@ -107,8 +107,8 @@ const deleteBranch = async (
             body: `${repoId}:${branchName}`,
           },
           false,
-          () => {
-            deleteBranch(repoId, branchName, isRemote, true)
+          async () => {
+            await deleteBranch(repoId, branchName, isRemote, true)
           },
         )
         return false
@@ -121,8 +121,8 @@ const deleteBranch = async (
           body: `${repoId}:${branchName}`,
         },
         false,
-        () => {
-          deleteBranch(repoId, branchName, isRemote, true)
+        async () => {
+          await deleteBranch(repoId, branchName, isRemote, true)
         },
       )
       return false
