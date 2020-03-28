@@ -190,7 +190,6 @@ const TicketRow: React.FC<ITicketRowProps> = ({
                 }}
                 css={css`
                   ${ClickableBadgeStyle}
-                  margin-left: 3px;
                 `}
               />
             )}
@@ -207,7 +206,6 @@ const TicketRow: React.FC<ITicketRowProps> = ({
                 }}
                 css={css`
                   ${ClickableBadgeStyle}
-                  margin-left: 3px;
                 `}
               />
             )}
@@ -233,7 +231,6 @@ const TicketRow: React.FC<ITicketRowProps> = ({
                 }}
                 css={css`
                   ${ClickableBadgeStyle}
-                  margin-left: 3px;
                 `}
               />
             )}
@@ -250,7 +247,6 @@ const TicketRow: React.FC<ITicketRowProps> = ({
               }}
               css={css`
                 ${ClickableBadgeStyle}
-                margin-left: 3px;
               `}
             />
           </span>
