@@ -25,6 +25,7 @@ const getRepoSettingsFromId = (repoId: string) => {
   const repo = okk(
     store.getState().settings.reposList.find((repo) => repo.repoId === repoId),
   )
+
   return repo
 }
 
