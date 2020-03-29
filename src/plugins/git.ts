@@ -259,48 +259,33 @@ const checkoutLocalBranch = async (repoId: string, branchName: string) => {
   }
 }
 
-type RepoRemote = {
+export type RepoRemote = {
   remoteName: string
   repoId: string
   orgID: string
 }
 
 const getRemote = async (
-  repoOrRepoID: string | git.SimpleGit,
+  gitRepo: git.SimpleGit,
 ): Promise<RepoRemote | false> => {
-  let gitRepo: git.SimpleGit
-
-  if (typeof repoOrRepoID === 'string') {
-    const repoSettings = getRepoSettingsFromId(repoOrRepoID)
-
-    gitRepo = git(okk(repoSettings.path))
-  } else {
-    gitRepo = repoOrRepoID
-  }
-
-  let remotes: RemoteWithRefs[] | false
-
   try {
-    remotes = await gitRepo.getRemotes(true)
-  } catch (error) {
-    logger.error('getRemote', error)
+    const result = await gitRepo.raw(['remote', '--verbose'])
+    const firstSplit = result.split('\n')[0].split('\t')
+    const remoteName = firstSplit[0]
 
-    remotes = false
-  }
+    const secondSplit = firstSplit[1]
+      .split('\n')[0]
+      .split('\t')[0]
+      .split(' ')[0]
+      .split(':')[1]
+      .split('/')
 
-  if (remotes && remotes.length) {
-    const remoteName = remotes[0].name
-
-    const fetchRemote = okk(remotes[0].refs.fetch)
-
-    const orgID = okk(fetchRemote.split(':')[1].split('/')[0])
-
-    const repoId = okk(fetchRemote.split(':')[1].split('/')[1].split('.')[0])
+    const orgID = secondSplit[0]
+    const repoId = secondSplit[1].split('.')[0]
 
     return { remoteName, orgID, repoId }
-  } else {
-    logger.error('getRemote', 'no remotes!')
-
+  } catch (error) {
+    logger.log(error)
     return false
   }
 }

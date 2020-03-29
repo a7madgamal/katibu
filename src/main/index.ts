@@ -20,6 +20,8 @@ import {
   deleteBranch,
   rebaseLocalBranch,
   checkoutLocalBranch,
+  getRepoFromPath,
+  getRemote,
 } from '../plugins/git'
 // import { getInfo } from './plugins/jenkins'
 
@@ -41,6 +43,7 @@ import {
   IPC_REFRESH_TICKETS,
   IPC_REFRESH_GIT,
   IPC_REFRESH_PRS,
+  IPC_GET_GIT_REMOTE,
 } from '../constants'
 
 const logger = electronTimber.create({ name: 'index' })
@@ -95,6 +98,18 @@ function registerShortcuts() {
     }),
   )
 }
+
+ipcMain.on(IPC_GET_GIT_REMOTE, async (e, path: string) => {
+  const gitRepo = await getRepoFromPath(path)
+
+  if (gitRepo) {
+    const remote = await getRemote(gitRepo)
+
+    e.returnValue = remote
+  } else {
+    e.returnValue = false
+  }
+})
 
 ipcMain.on(IPC_CREATE_BRANCH, async (e, key) => {
   const result = await createBranchFromTicketId(key)
