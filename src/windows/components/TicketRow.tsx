@@ -264,7 +264,8 @@ const TicketRow: React.FC<ITicketRowProps> = ({
                   background-color: ${
                     mergeable_state === 'behind'
                       ? '#F7BB2F'
-                      : mergeable_state === 'blocked'
+                      : mergeable_state === 'blocked' ||
+                        mergeable_state === 'dirty'
                       ? '#F32C3E'
                       : mergeable_state === 'clean'
                       ? '#7ABB6B'
