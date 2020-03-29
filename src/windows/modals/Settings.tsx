@@ -10,9 +10,9 @@ import { FieldArray } from 'react-final-form-arrays'
 import { TAppState } from '../../store'
 import { jsx } from '@emotion/core'
 import css from '@emotion/css'
-import { shell } from 'electron'
+import { shell, ipcRenderer } from 'electron'
 import { folderPicker } from '../../plugins/dialogs'
-import { getRepoFromPath, getRemote } from '../../plugins/git'
+import { RepoRemote } from '../../plugins/git'
 import {
   TextFieldWrapper,
   Error,
@@ -20,6 +20,7 @@ import {
   SupportLink,
   textColor,
 } from '../components/styles'
+import { IPC_GET_GIT_REMOTE } from '../../constants'
 
 const mapState = (state: TAppState) => ({
   settings: state.settings,
@@ -267,25 +268,25 @@ const settings: React.FC<TProps> = ({ settings, saveSettingsAction }) => (
               type="button"
               onClick={async () => {
                 const folder = await folderPicker()
+
                 if (!folder.canceled) {
                   const path = folder.filePaths[0]
-                  const gitRepo = await getRepoFromPath(path)
-                  if (gitRepo) {
-                    const remote = await getRemote(gitRepo)
 
-                    if (remote) {
-                      form.mutators.push('reposList', {
-                        path,
-                        orgID: remote.orgID,
-                        remoteName: remote.remoteName,
-                        repoId: remote.repoId,
-                        enableAutoRefresh: true,
-                      })
-                    } else {
-                      alert("couldn't get git remote details")
-                    }
+                  const remote: RepoRemote | false = ipcRenderer.sendSync(
+                    IPC_GET_GIT_REMOTE,
+                    path,
+                  )
+
+                  if (remote) {
+                    form.mutators.push('reposList', {
+                      path,
+                      orgID: remote.orgID,
+                      remoteName: remote.remoteName,
+                      repoId: remote.repoId,
+                      enableAutoRefresh: true,
+                    })
                   } else {
-                    alert('not a git repo')
+                    alert("couldn't get git remote details")
                   }
                 }
               }}
