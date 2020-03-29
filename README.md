@@ -1,6 +1,9 @@
 # katibu
 - The ultimate tool for the super-lazy, 10x, extremly busy agile developer.
 - Connect Jira, git, Github in one place. How? check the table to know what you're missing 😱
+## شرح للبرنامج باللغة العربية
+https://youtu.be/FXFyHAY3Br0
+
 
 ![image](https://user-images.githubusercontent.com/939602/77838115-449a8d80-7160-11ea-8fc1-38db1e777dfb.png)
 
