@@ -2,7 +2,7 @@
 - The ultimate tool for the super-lazy, 10x, extremly busy agile developer.
 - Connect Jira, git, Github in one place. How? check the table to know what you're missing 😱
 
-![image](https://user-images.githubusercontent.com/939602/77831758-ebfbce00-7128-11ea-9034-7d34572e4d15.png)
+![image](https://user-images.githubusercontent.com/939602/77838115-449a8d80-7160-11ea-8fc1-38db1e777dfb.png)
 
 | before katibu 🐢 | after katibu 🚀|
 | :-----------: | :-----------: |
