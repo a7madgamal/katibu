@@ -44,6 +44,8 @@ import {
   IPC_REFRESH_GIT,
   IPC_REFRESH_PRS,
   IPC_GET_GIT_REMOTE,
+  IPC_RELOAD,
+  IPC_NAVIGATE_HOME,
 } from '../constants'
 
 const logger = electronTimber.create({ name: 'index' })
@@ -111,7 +113,7 @@ ipcMain.on(IPC_GET_GIT_REMOTE, async (e, path: string) => {
   }
 })
 
-ipcMain.on(IPC_CREATE_BRANCH, async (e, key) => {
+ipcMain.on(IPC_CREATE_BRANCH, async (e, key: string) => {
   const result = await createBranchFromTicketId(key)
 
   if (result) {
@@ -119,6 +121,7 @@ ipcMain.on(IPC_CREATE_BRANCH, async (e, key) => {
       title: 'branch created',
       body: key,
     })
+
     mainWindow.webContents.send(IPC_REFRESH_GIT)
   }
 })
@@ -185,6 +188,11 @@ ipcMain.on(IPC_HIDE_SELECT, () => {
 
 ipcMain.on(IPC_CANCEL_SELECT, () => {
   selectWindow.hide()
+})
+
+ipcMain.on(IPC_RELOAD, () => {
+  selectWindow.reload()
+  mainWindow.webContents.send(IPC_NAVIGATE_HOME)
 })
 
 // app.on('window-all-closed', () => {

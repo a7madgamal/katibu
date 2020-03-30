@@ -5,6 +5,8 @@ import { TAppState } from '../index'
 import { SAVE_SETTINGS, ISettingsState } from './types'
 // @ts-ignore
 import electronTimber from 'electron-timber'
+import { ipcRenderer } from 'electron'
+import { IPC_RELOAD } from '../../constants'
 
 const logger = electronTimber.create({ name: 'settings/actions' })
 
@@ -16,4 +18,6 @@ export const saveSettings = (
   settingsStore.save(payload)
 
   dispatch({ type: SAVE_SETTINGS, payload })
+
+  ipcRenderer.send(IPC_RELOAD)
 }

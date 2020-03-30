@@ -2,10 +2,9 @@ import * as git from 'simple-git/promise'
 
 import { okk } from '../helpers/helpers'
 import { getRepoSettingsFromId } from '../store'
-import { showRepoSelector, mainWindow } from './windows'
+import { showRepoSelector } from './windows'
 import { branchNameFromTicketId } from './jira'
 import { showNotification } from './notifications'
-import { RemoteWithRefs } from 'simple-git/typings/response'
 import { IRepoSetting } from '../store/settings/types'
 // @ts-ignore
 import electronTimber from 'electron-timber'
@@ -13,9 +12,9 @@ import electronTimber from 'electron-timber'
 const logger = electronTimber.create({ name: 'git' })
 
 const getGitRepoFromId = async (repoId: string) => {
-  const repo = getRepoSettingsFromId(repoId)
+  const repoSettings = getRepoSettingsFromId(repoId)
 
-  const gitRepo = git(okk(repo.path))
+  const gitRepo = git(okk(repoSettings.path))
   return gitRepo
 }
 
@@ -215,13 +214,12 @@ const createBranchFromTicketId = async (ticketId: string) => {
   try {
     const newBranchName = await branchNameFromTicketId(ticketId)
     const settings = await showRepoSelector()
+
     if (!settings) {
       return false
     }
 
-    const repoSettings = getRepoSettingsFromId(settings.repoId)
-
-    await createBranch(okk(repoSettings.path), okk(newBranchName))
+    await createBranch(okk(settings.path), okk(newBranchName))
 
     return true
   } catch (e) {

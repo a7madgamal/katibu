@@ -108,7 +108,7 @@ const TicketRow: React.FC<ITicketRowProps> = ({
           css={css`
             ${BadgeStyle}
             ${ClickableBadgeStyle}
-            color: ${actionsColor};
+            color: #fff;
             background-color: ${ticketInProgressBGColor};
           `}
         >

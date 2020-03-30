@@ -22,16 +22,21 @@ import { ipcRenderer } from 'electron'
 import { fetchTickets, fetchPRs } from '../store/tickets/actions'
 import { fetchGit } from '../store/branches/actions'
 import {
-  IPC_SELECTOR,
+  IPC_NAVIGATE_SELECTOR,
   IPC_REFRESH_TICKETS,
   IPC_REFRESH_PRS,
   IPC_REFRESH_GIT,
+  IPC_NAVIGATE_HOME,
 } from '../constants'
 
 const customHistory = createHashHistory()
 
-ipcRenderer.on(IPC_SELECTOR, (event) => {
+ipcRenderer.on(IPC_NAVIGATE_SELECTOR, (event) => {
   customHistory.replace('/select')
+})
+
+ipcRenderer.on(IPC_NAVIGATE_HOME, (event) => {
+  customHistory.replace('/')
 })
 
 ipcRenderer.on(IPC_REFRESH_TICKETS, (event) => {

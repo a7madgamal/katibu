@@ -1,5 +1,9 @@
 import { BrowserWindow, screen, ipcMain } from 'electron'
-import { IPC_SELECTOR, IPC_CANCEL_SELECT, IPC_REPO_SELECT } from '../constants'
+import {
+  IPC_NAVIGATE_SELECTOR,
+  IPC_CANCEL_SELECT,
+  IPC_REPO_SELECT,
+} from '../constants'
 
 var mainWindow: BrowserWindow
 var selectWindow: BrowserWindow
@@ -47,7 +51,7 @@ const createSelectWindow = () => {
   selectWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
   // selectWindow.webContents.openDevTools()
   selectWindow.webContents.on('did-finish-load', () => {
-    selectWindow.webContents.send(IPC_SELECTOR)
+    selectWindow.webContents.send(IPC_NAVIGATE_SELECTOR)
   })
   return selectWindow
   // mainWindow.on('closed', () => {
@@ -58,14 +62,16 @@ const createSelectWindow = () => {
 const showRepoSelector = () => {
   selectWindow.show()
 
-  return new Promise<{ repoId: string } | false>((resolve, reject) => {
-    ipcMain.once(IPC_REPO_SELECT, (e, repoId: string) => {
-      resolve({ repoId })
-    })
-    ipcMain.once(IPC_CANCEL_SELECT, (e) => {
-      resolve(undefined)
-    })
-  })
+  return new Promise<{ repoId: string; path: string } | false>(
+    (resolve, reject) => {
+      ipcMain.once(IPC_REPO_SELECT, (e, { repoId, path }) => {
+        resolve({ repoId, path })
+      })
+      ipcMain.once(IPC_CANCEL_SELECT, (e) => {
+        resolve(undefined)
+      })
+    },
+  )
 }
 
-export { createAppWindow, createSelectWindow, showRepoSelector, mainWindow }
+export { createAppWindow, createSelectWindow, showRepoSelector }

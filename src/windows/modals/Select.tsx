@@ -53,7 +53,7 @@ const select: React.FC<TProps> = ({ settings }) => {
           padding: 0;
         `}
       >
-        {settings.reposList.map(({ repoId }) => (
+        {settings.reposList.map(({ repoId, path }) => (
           <li
             css={css`
               font-size: 20px;
@@ -70,7 +70,7 @@ const select: React.FC<TProps> = ({ settings }) => {
             `}
             key={repoId}
             onClick={() => {
-              ipcRenderer.send(IPC_REPO_SELECT, repoId)
+              ipcRenderer.send(IPC_REPO_SELECT, { repoId, path })
               ipcRenderer.send(IPC_HIDE_SELECT)
             }}
           >
