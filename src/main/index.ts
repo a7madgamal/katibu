@@ -11,27 +11,25 @@ electronUnhandled({ showDialog: true })
 
 import { app, globalShortcut, ipcMain, BrowserWindow } from 'electron'
 
-import { okk } from '../helpers/helpers'
-import { pushTask } from '../tasks/push'
 // import { setContextMenu } from '../plugins/tray'
-import { createAppWindow, createSelectWindow } from '../plugins/windows'
+import { settingsPlugin } from './plugins/settings'
+import { createAppWindow, createSelectWindow } from './plugins/windows'
+import { okk } from './helpers'
 import {
+  getRepoFromPath,
+  getRemote,
   createBranchFromTicketId,
   deleteBranch,
   rebaseLocalBranch,
   checkoutLocalBranch,
-  getRepoFromPath,
-  getRemote,
-} from '../plugins/git'
-// import { getInfo } from './plugins/jenkins'
-
-// import electronDevtoolsInstaller, {
-//   REACT_DEVELOPER_TOOLS,
-// } from 'electron-devtools-installer'
-import { showNotification } from '../plugins/notifications'
+  getBranches,
+} from './plugins/git'
+import { showNotification } from '../shared/plugins/notifications'
+import { pushTask } from './tasks/push'
 // @ts-ignore
 import electronTimber from 'electron-timber'
-import { updateChecker } from '../plugins/updateChecker'
+import { updateChecker } from './plugins/updateChecker'
+
 import {
   IPC_CHECKOUT_LOCAL_BRANCH,
   IPC_CREATE_BRANCH,
@@ -40,13 +38,16 @@ import {
   IPC_PUSH_BRANCH,
   IPC_CANCEL_SELECT,
   IPC_HIDE_SELECT,
-  IPC_REFRESH_TICKETS,
-  IPC_REFRESH_GIT,
-  IPC_REFRESH_PRS,
+  IPC_RENDER_REFRESH_TICKETS,
+  IPC_RENDER_REFRESH_GIT,
+  IPC_RENDER_REFRESH_PRS,
+  IPC_RENDER_NAVIGATE_HOME,
   IPC_GET_GIT_REMOTE,
   IPC_RELOAD,
-  IPC_NAVIGATE_HOME,
-} from '../constants'
+  IPC_LOAD_SETTINGS,
+  IPC_GET_BRANCHES,
+  IPC_SAVE_SETTINGS,
+} from '../shared/constants'
 
 const logger = electronTimber.create({ name: 'index' })
 
@@ -88,9 +89,9 @@ app.on('browser-window-focus', (e) => {
   // const now = new Date().getTime()
   // const diff = creationTime ? now - Math.round(creationTime) : true
 
-  mainWindow.webContents.send(IPC_REFRESH_TICKETS)
-  mainWindow.webContents.send(IPC_REFRESH_GIT)
-  mainWindow.webContents.send(IPC_REFRESH_PRS)
+  mainWindow.webContents.send(IPC_RENDER_REFRESH_TICKETS)
+  mainWindow.webContents.send(IPC_RENDER_REFRESH_GIT)
+  mainWindow.webContents.send(IPC_RENDER_REFRESH_PRS)
 })
 
 function registerShortcuts() {
@@ -101,19 +102,43 @@ function registerShortcuts() {
   )
 }
 
-ipcMain.on(IPC_GET_GIT_REMOTE, async (e, path: string) => {
+ipcMain.handle(IPC_SAVE_SETTINGS, async (_e, payload) => {
+  console.log(IPC_SAVE_SETTINGS, { payload })
+
+  settingsPlugin.save(payload)
+
+  return true
+})
+
+ipcMain.handle(IPC_GET_BRANCHES, async (_e, repoId: string) => {
+  console.log(IPC_GET_BRANCHES, { repoId })
+
+  const branches = await getBranches(repoId)
+
+  return branches
+})
+
+ipcMain.handle(IPC_GET_GIT_REMOTE, async (_e, path: string) => {
+  console.log({ path })
+
   const gitRepo = await getRepoFromPath(path)
 
   if (gitRepo) {
     const remote = await getRemote(gitRepo)
 
-    e.returnValue = remote
+    return remote
   } else {
-    e.returnValue = false
+    return false
   }
 })
 
-ipcMain.on(IPC_CREATE_BRANCH, async (e, key: string) => {
+ipcMain.handle(IPC_LOAD_SETTINGS, async (e) => {
+  const settings = settingsPlugin.getAll()
+
+  return settings
+})
+
+ipcMain.handle(IPC_CREATE_BRANCH, async (e, key: string) => {
   const result = await createBranchFromTicketId(key)
 
   if (result) {
@@ -122,21 +147,21 @@ ipcMain.on(IPC_CREATE_BRANCH, async (e, key: string) => {
       body: key,
     })
 
-    mainWindow.webContents.send(IPC_REFRESH_GIT)
+    mainWindow.webContents.send(IPC_RENDER_REFRESH_GIT)
   }
 })
 
-ipcMain.on(
+ipcMain.handle(
   IPC_DELETE_BRANCH,
   async (e, repoId: string, branchName: string, isRemote: boolean) => {
     await deleteBranch(repoId, branchName, isRemote, false)
 
-    mainWindow.webContents.send(IPC_REFRESH_PRS)
-    mainWindow.webContents.send(IPC_REFRESH_GIT)
+    mainWindow.webContents.send(IPC_RENDER_REFRESH_PRS)
+    mainWindow.webContents.send(IPC_RENDER_REFRESH_GIT)
   },
 )
 
-ipcMain.on(IPC_REBASE_BRANCH, async (e, repoId, branchName) => {
+ipcMain.handle(IPC_REBASE_BRANCH, async (e, repoId, branchName) => {
   try {
     await rebaseLocalBranch(repoId, branchName)
     showNotification({
@@ -150,21 +175,21 @@ ipcMain.on(IPC_REBASE_BRANCH, async (e, repoId, branchName) => {
     })
   }
 
-  mainWindow.webContents.send(IPC_REFRESH_GIT)
+  mainWindow.webContents.send(IPC_RENDER_REFRESH_GIT)
 })
 
-ipcMain.on(
+ipcMain.handle(
   IPC_PUSH_BRANCH,
   async (
     e,
     { repoId, skipChecks, branchName }: Parameters<typeof pushTask>[0],
   ) => {
     await pushTask({ repoId, skipChecks, branchName })
-    mainWindow.webContents.send(IPC_REFRESH_GIT)
+    mainWindow.webContents.send(IPC_RENDER_REFRESH_GIT)
   },
 )
 
-ipcMain.on(IPC_CHECKOUT_LOCAL_BRANCH, async (e, repoId, branchName) => {
+ipcMain.handle(IPC_CHECKOUT_LOCAL_BRANCH, async (e, repoId, branchName) => {
   const success = await checkoutLocalBranch(repoId, branchName)
 
   if (success) {
@@ -179,20 +204,20 @@ ipcMain.on(IPC_CHECKOUT_LOCAL_BRANCH, async (e, repoId, branchName) => {
     })
   }
 
-  mainWindow.webContents.send(IPC_REFRESH_GIT)
+  mainWindow.webContents.send(IPC_RENDER_REFRESH_GIT)
 })
 
 ipcMain.on(IPC_HIDE_SELECT, () => {
   selectWindow.hide()
 })
 
-ipcMain.on(IPC_CANCEL_SELECT, () => {
+ipcMain.handle(IPC_CANCEL_SELECT, () => {
   selectWindow.hide()
 })
 
-ipcMain.on(IPC_RELOAD, () => {
+ipcMain.handle(IPC_RELOAD, () => {
   selectWindow.reload()
-  mainWindow.webContents.send(IPC_NAVIGATE_HOME)
+  mainWindow.webContents.send(IPC_RENDER_NAVIGATE_HOME)
 })
 
 // app.on('window-all-closed', () => {
