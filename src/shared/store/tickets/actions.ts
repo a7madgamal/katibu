@@ -2,7 +2,6 @@ import { Action } from 'redux'
 import { ThunkAction } from 'redux-thunk'
 
 import { getMyTickets, ticketUrlFromKey } from '../../plugins/jira'
-import { TAppState } from '..'
 
 import {
   LOAD_JIRA_TICKETS,
@@ -19,6 +18,7 @@ import { shell } from 'electron'
 import { TExtendedPullRequest } from '../../types'
 // @ts-ignore
 import electronTimber from 'electron-timber'
+import { TAppState } from '../../../main/store'
 
 const logger = electronTimber.create({ name: 'tickets/actions' })
 
@@ -74,7 +74,8 @@ export const fetchTickets = (
               body: `Status changed to ${newTicket.fields.status.name}`,
             },
             true,
-            () => shell.openExternal(ticketUrlFromKey(newTicket.key)),
+            async () =>
+              shell.openExternal(await ticketUrlFromKey(newTicket.key)),
           )
         }
       } else {
@@ -84,7 +85,7 @@ export const fetchTickets = (
             body: `New ticket detected!`,
           },
           true,
-          () => shell.openExternal(ticketUrlFromKey(newTicket.key)),
+          async () => shell.openExternal(await ticketUrlFromKey(newTicket.key)),
         )
       }
     }

@@ -71,7 +71,9 @@ const TicketRow: React.FC<ITicketRowProps> = ({
       <div data-qa-id="title row">
         <span
           data-id="jira-ticket-key"
-          onClick={() => shell.openExternal(ticketUrlFromKey(ticketData.key))}
+          onClick={async () =>
+            shell.openExternal(await ticketUrlFromKey(ticketData.key))
+          }
           css={css`
           ${BadgeStyle}
           ${ClickableBadgeStyle}
@@ -238,7 +240,7 @@ const TicketRow: React.FC<ITicketRowProps> = ({
               onClick={async () => {
                 await ipcRenderer.invoke(IPC_DELETE_BRANCH, {
                   repoId: relatedBranch.repoId,
-                  name: relatedBranch.name,
+                  branchName: relatedBranch.name,
                   isRemote: relatedBranch.isRemote,
                 })
               }}

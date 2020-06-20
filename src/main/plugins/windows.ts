@@ -25,7 +25,7 @@ const createAppWindow = () => {
   })
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
   return mainWindow
   // mainWindow.on('closed', () => {
@@ -51,7 +51,7 @@ const createSelectWindow = () => {
   })
 
   selectWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
-  // selectWindow.webContents.openDevTools()
+  selectWindow.webContents.openDevTools()
   selectWindow.webContents.on('did-finish-load', () => {
     selectWindow.webContents.send(IPC_RENDER_NAVIGATE_SELECTOR)
   })
@@ -66,10 +66,10 @@ const showRepoSelector = () => {
 
   return new Promise<{ repoId: string; path: string } | false>(
     (resolve, reject) => {
-      ipcMain.handle(IPC_REPO_SELECT, (e, { repoId, path }) => {
+      ipcMain.once(IPC_REPO_SELECT, (e, { repoId, path }) => {
         resolve({ repoId, path })
       })
-      ipcMain.handle(IPC_CANCEL_SELECT, (e) => {
+      ipcMain.once(IPC_CANCEL_SELECT, (e) => {
         resolve(undefined)
       })
     },

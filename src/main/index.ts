@@ -48,6 +48,8 @@ import {
   IPC_GET_BRANCHES,
   IPC_SAVE_SETTINGS,
 } from '../shared/constants'
+import { getMainStore } from './store'
+import { LOAD_SETTINGS } from '../shared/types/settings'
 
 const logger = electronTimber.create({ name: 'index' })
 
@@ -61,6 +63,10 @@ app.on('ready', () => {
   // electronDevtoolsInstaller(REACT_DEVELOPER_TOOLS)
   //   .then(name => logger.log(`REACT_DEVELOPER_TOOLS Added:  ${name}`))
   //   .catch(err => logger.error('REACT_DEVELOPER_TOOLS error:', err))
+  const store = getMainStore()
+  const payload = settingsPlugin.getAll()
+
+  store.dispatch({ type: LOAD_SETTINGS, payload })
 
   mainWindow = createAppWindow()
   selectWindow = createSelectWindow()
@@ -153,7 +159,7 @@ ipcMain.handle(IPC_CREATE_BRANCH, async (e, key: string) => {
 
 ipcMain.handle(
   IPC_DELETE_BRANCH,
-  async (e, repoId: string, branchName: string, isRemote: boolean) => {
+  async (e, { repoId, branchName, isRemote }) => {
     await deleteBranch(repoId, branchName, isRemote, false)
 
     mainWindow.webContents.send(IPC_RENDER_REFRESH_PRS)

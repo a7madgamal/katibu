@@ -1,4 +1,5 @@
 export const SAVE_SETTINGS = 'SAVE_SETTINGS'
+export const LOAD_SETTINGS = 'LOAD_SETTINGS'
 
 export interface IRepoSetting {
   path: string
@@ -24,4 +25,9 @@ interface ISaveSettingsAction {
   payload: ISettingsState
 }
 
-export type TSettingsActionTypes = ISaveSettingsAction
+interface ILoadSettingsAction {
+  type: typeof LOAD_SETTINGS
+  payload: ISettingsState
+}
+
+export type TSettingsActionTypes = ISaveSettingsAction | ILoadSettingsAction

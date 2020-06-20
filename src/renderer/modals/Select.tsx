@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { ipcRenderer } from 'electron'
 import { css, jsx } from '@emotion/core'
 import { connect, ConnectedProps } from 'react-redux'
-import { TAppState } from '../../shared/store'
+import { TAppState } from '../../main/store'
 import {
   IPC_CANCEL_SELECT,
   IPC_REPO_SELECT,
@@ -69,9 +69,9 @@ const select: React.FC<TProps> = ({ settings }) => {
               }
             `}
             key={repoId}
-            onClick={async () => {
-              await ipcRenderer.invoke(IPC_REPO_SELECT, { repoId, path })
-              await ipcRenderer.invoke(IPC_HIDE_SELECT)
+            onClick={() => {
+              ipcRenderer.send(IPC_REPO_SELECT, { repoId, path })
+              ipcRenderer.send(IPC_HIDE_SELECT)
             }}
           >
             {repoId}

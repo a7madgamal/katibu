@@ -1,11 +1,11 @@
 import { Octokit } from '@octokit/rest'
-import { getStore } from '../../shared/store'
+import { getRendererStore } from '../../renderer/store'
 import { TPullRequest, TExtendedPullRequest } from '../../shared/types'
 import { getRepoSettingsFromId } from '../../shared/helpers'
 
 // renderer
 const updatePR = async (repoId: string, pullNumber: number) => {
-  const state = getStore().getState()
+  const state = getRendererStore().getState()
 
   const octokit = new Octokit({
     auth: state.settings.githubAuth,
@@ -25,7 +25,7 @@ const updatePR = async (repoId: string, pullNumber: number) => {
 
 // renderer
 const _getMyPRs = async (repoId: string, options = {}) => {
-  const state = getStore().getState()
+  const state = getRendererStore().getState()
 
   const octokit = new Octokit({
     auth: state.settings.githubAuth,
@@ -77,7 +77,7 @@ const getMyExtendedPRs = async (repoId: string) => {
 
 // shared
 const getPR = async (owner: string, repo: string, prNumber: number) => {
-  const state = getStore().getState()
+  const state = getRendererStore().getState()
 
   const octokit = new Octokit({
     auth: state.settings.githubAuth,
@@ -111,7 +111,7 @@ const generateNewOrCurrentPRLink = ({
     .shift()
     ?.toUpperCase()}-${branchNameArray.shift()}`
 
-  const state = getStore().getState()
+  const state = getRendererStore().getState()
 
   const hasPR =
     state.tickets.pullRequests &&

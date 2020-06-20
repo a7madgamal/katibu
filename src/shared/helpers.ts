@@ -1,35 +1,29 @@
-import { getStore } from './store'
 import { IRepoSetting, ISettingsState } from './types/settings'
 // @ts-ignore
 import electronTimber from 'electron-timber'
-import { ipcRenderer } from 'electron'
-import { IPC_LOAD_SETTINGS } from './constants'
 const logger = electronTimber.create({ name: '[SHARED:HELPERS]' })
 
 const getRepoSettingsFromId = async (repoId: string) => {
   const isRenderer = process && process.type === 'renderer'
   logger.log('getRepoSettingsFromId', { isRenderer })
 
+  let store
   if (isRenderer) {
-    const state = getStore().getState()
-
-    const repo = state.settings.reposList.find((repo) => repo.repoId === repoId)
-
-    if (repo) {
-      return repo
-    } else {
-      throw new Error('RENDERER: getRepoSettingsFromId failed')
-    }
+    const { getRendererStore } = await import('../renderer/store')
+    store = getRendererStore()
   } else {
-    const settings: ISettingsState = await ipcRenderer.invoke(IPC_LOAD_SETTINGS)
+    const { getMainStore } = await import('../main/store')
+    store = getMainStore()
+  }
 
-    const repo = settings.reposList.find((repo) => repo.repoId === repoId)
+  const state = store.getState()
 
-    if (repo) {
-      return repo
-    } else {
-      throw new Error('MAIN: getRepoSettingsFromId failed')
-    }
+  const repo = state.settings.reposList.find((repo) => repo.repoId === repoId)
+
+  if (repo) {
+    return repo
+  } else {
+    throw new Error(`getRepoSettingsFromId failed in isRenderer:${isRenderer}`)
   }
 }
 

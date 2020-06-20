@@ -9,7 +9,7 @@ import { fetchTickets, fetchPRs } from '../shared/store/tickets/actions'
 import { fetchGit } from '../shared/store/branches/actions'
 
 import { connect, ConnectedProps } from 'react-redux'
-import { TAppState } from '../shared/store'
+import { TAppState } from '../main/store'
 import { Toolbar } from './components/Toolbar'
 import { TicketRow } from './components/TicketRow'
 import { RouteComponentProps } from 'react-router'

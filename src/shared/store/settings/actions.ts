@@ -1,6 +1,6 @@
 import { Action } from 'redux'
 import { ThunkAction } from 'redux-thunk'
-import { TAppState } from '../index'
+import { TAppState } from '../../../main/store'
 import { SAVE_SETTINGS, ISettingsState } from '../../types/settings'
 // @ts-ignore
 import electronTimber from 'electron-timber'

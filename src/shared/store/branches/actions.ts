@@ -3,7 +3,7 @@ import { ThunkAction } from 'redux-thunk'
 
 import { showNotification } from '../../plugins/notifications'
 
-import { TAppState } from '..'
+import { TAppState } from '../../../main/store'
 
 import {
   LOCAL_BRANCHES_UPDATED,
@@ -23,16 +23,7 @@ export const fetchGit = (): ThunkAction<
   null,
   Action<string>
 > => async (dispatch, getState) => {
-  const isRenderer = process && process.type === 'renderer'
-
   dispatch({ type: LOAD_BRANCHES })
-
-  // const processArray = async (array) {
-  //   for (const item of array) {
-  //     await delayedLog(item);
-  //   }
-  //   console.log('Done!');
-  // }
 
   const state = getState()
   let newBranches: TBranches = []
@@ -47,23 +38,23 @@ export const fetchGit = (): ThunkAction<
       repo.repoId,
     )
 
-    // if (branches) {
-    //   for (const [name, branch] of Object.entries(branches.branches)) {
-    //     if (
-    //       !['master', `remotes/${repo.remoteName}/master`].includes(branch.name)
-    //     ) {
-    //       newBranches.push({
-    //         isCheckedout: branch.current,
-    //         name: name.replace(`remotes/${repo.remoteName}/`, ''),
-    //         repoId: repo.repoId,
-    //         orgID: repo.orgID,
-    //         isRemote: name.startsWith('remotes/'),
-    //       })
-    //     }
-    //   }
-    // } else {
-    //   logger.log('no branches for repo', repo)
-    // }
+    if (branches) {
+      for (const [name, branch] of Object.entries(branches.branches)) {
+        if (
+          !['master', `remotes/${repo.remoteName}/master`].includes(branch.name)
+        ) {
+          newBranches.push({
+            isCheckedout: branch.current,
+            name: name.replace(`remotes/${repo.remoteName}/`, ''),
+            repoId: repo.repoId,
+            orgID: repo.orgID,
+            isRemote: name.startsWith('remotes/'),
+          })
+        }
+      }
+    } else {
+      logger.log('no branches for repo', repo)
+    }
   }
 
   const oldRemoteBranches = state.branches.branches.filter(
@@ -95,7 +86,7 @@ export const fetchGit = (): ThunkAction<
         async () => {
           await ipcRenderer.invoke(IPC_DELETE_BRANCH, {
             repoId: oldRemoteBranches[i].repoId,
-            name: oldRemoteBranches[i].name,
+            branchName: oldRemoteBranches[i].name,
             isRemote: false,
           })
         },

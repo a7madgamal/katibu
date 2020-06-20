@@ -6,7 +6,7 @@
   "repository": "https://github.com/a7madgamal/katibu",
   "main": ".webpack/main",
   "scripts": {
-    "start": "electron-forge start",
+    "start": "yarn tsc && electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "release": "electron-forge publish",
@@ -94,6 +94,7 @@
     "body-parser": "^1.19.0",
     "compare-versions": "^3.6.0",
     "devtron": "^1.4.0",
+    "electron-redux": "^1.5.3",
     "electron-squirrel-startup": "^1.0.0",
     "electron-unhandled": "^3.0.2",
     "express": "4.17.1",

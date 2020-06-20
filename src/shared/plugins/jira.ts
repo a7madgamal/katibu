@@ -1,5 +1,4 @@
 import JiraClient from 'jira-connector'
-import { getStore } from '../store'
 import { IJiraTicket } from '../types/tickets'
 // @ts-ignore
 import electronTimber from 'electron-timber'
@@ -24,7 +23,9 @@ const _jiraClient = (jiraEmail: string, jiraAuth: string, jiraHost: string) => {
 
 // renderer
 const getMyTickets: () => Promise<Array<IJiraTicket> | false> = async () => {
-  const state = getStore().getState()
+  const { getRendererStore } = await import('../../renderer/store')
+
+  const state = getRendererStore().getState()
 
   try {
     const result: {
@@ -101,8 +102,10 @@ const branchNameFromTicketId = async (issueKey: string) => {
 }
 
 // renderer
-const ticketUrlFromKey = (key: string) => {
-  const state = getStore().getState()
+const ticketUrlFromKey = async (key: string) => {
+  const { getRendererStore } = await import('../../renderer/store')
+
+  const state = getRendererStore().getState()
 
   return `https://${state.settings.jiraHost}/browse/${key}`
 }

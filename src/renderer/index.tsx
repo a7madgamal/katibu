@@ -16,7 +16,7 @@ import { Provider } from 'react-redux'
 import { Settings } from './modals/Settings'
 import { App } from './App'
 import { Select } from './modals/Select'
-import { getStore } from '../shared/store/index'
+import { getRendererStore } from '../renderer/store'
 import { ErrorBoundary } from './ErrorBoundary'
 import { ipcRenderer } from 'electron'
 import { fetchTickets, fetchPRs } from '../shared/store/tickets/actions'
@@ -40,21 +40,29 @@ ipcRenderer.on(IPC_RENDER_NAVIGATE_HOME, (event) => {
 })
 
 ipcRenderer.on(IPC_RENDER_REFRESH_TICKETS, (event) => {
-  fetchTickets(false)(getStore().dispatch, getStore().getState, null)
+  fetchTickets(false)(
+    getRendererStore().dispatch,
+    getRendererStore().getState,
+    null,
+  )
 })
 
 ipcRenderer.on(IPC_RENDER_REFRESH_PRS, (event) => {
-  fetchPRs(false)(getStore().dispatch, getStore().getState, null)
+  fetchPRs(false)(
+    getRendererStore().dispatch,
+    getRendererStore().getState,
+    null,
+  )
 })
 
 ipcRenderer.on(IPC_RENDER_REFRESH_GIT, (event) => {
-  fetchGit()(getStore().dispatch, getStore().getState, null)
+  fetchGit()(getRendererStore().dispatch, getRendererStore().getState, null)
 })
 
 render(
   <React.StrictMode>
     <ErrorBoundary>
-      <Provider store={getStore()}>
+      <Provider store={getRendererStore()}>
         <Router history={customHistory}>
           <Route exact path="/" component={App} />
           <Route exact path="/settings" component={Settings} />

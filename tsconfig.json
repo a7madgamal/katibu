@@ -8,6 +8,8 @@
     "allowSyntheticDefaultImports": true,
     "pretty": true,
     "target": "es2018",
+    "module": "es2020",
+    "skipLibCheck": true,
     "jsx": "react"
   },
   "include": ["src/**/*"],
