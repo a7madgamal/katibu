@@ -3,27 +3,24 @@
 import { css, jsx } from '@emotion/core'
 import styled from '@emotion/styled'
 
-const titlesColor = 'aquamarine'
-const ticketInProgressBGColor = '#4285f7'
-const ticketInProgressColor = '#222'
+const titlesColor = '#fff'
+const ticketInProgressBGColor = '#0052cc'
+const ticketInProgressColor = '#fff'
 const ticketInactiveBGColor = '#999'
 const ticketInactiveColor = '#000'
 const actionsColor = '#333'
 const cardsBGColor = '#ddd'
-const activeCardAccentColor = '#aa0000'
+const activeCardAccentColor = '#00cc00'
 // const remoteCardColor = ''
 // const remoteCardBGColor = ''
 const borderColor = '#bfbfbf'
 
 const BadgeStyle = css`
-  font-family: monospace;
   cursor: default;
   display: inline-flex;
-  margin: 3px;
-  padding-top: 3px;
-  padding-bottom: 3px;
-  padding-left: 4px;
-  padding-right: 4px;
+  margin: 5px;
+  padding: 5px;
+  border-radius: 5px;
   border-radius: 4px;
   width: fit-content;
   align-items: center;
@@ -57,7 +54,7 @@ const textColor = '#cacaca'
 const settingLinkColor = '#8bc34a'
 
 const Label = styled.label`
-  font-size: 13px;
+  font-size: 18px;
   margin-bottom: 2px;
   color: ${textColor};
 `
@@ -66,7 +63,7 @@ const SupportLink = styled.span`
   margin-left: 10px;
   display: inline;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 18px;
   color: ${settingLinkColor};
 
   :hover {

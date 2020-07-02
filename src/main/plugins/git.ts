@@ -172,14 +172,21 @@ const createBranch = async (
   fromBranch = 'master',
 ) => {
   const repo = git(okk(repoPath))
+
   await repo.checkout('master')
+
   try {
     await repo.pull()
   } catch (error) {
     logger.log('pull failed')
   }
+  console.log({ title, fromBranch })
 
-  await repo.checkoutBranch(okk(title), fromBranch)
+  try {
+    await repo.checkoutBranch(okk(title), fromBranch)
+  } catch (error) {
+    logger.log('checkoutBranch failed')
+  }
 }
 
 const pushBranch = async ({
@@ -196,7 +203,8 @@ const pushBranch = async ({
   const gitRepo = git(okk(repo.path))
 
   const status = await _getRepoStatus(repo.path)
-  const selectedBranchName = branchName || status.current
+  const selectedBranchName =
+    branchName || (status.current === null ? undefined : status.current)
 
   try {
     await gitRepo.push(okk(repo.remoteName), selectedBranchName, {
@@ -225,6 +233,7 @@ const createBranchFromTicketId = async (ticketId: string) => {
     return true
   } catch (e) {
     logger.error('createBranchFromTicket:', e)
+
     showNotification(
       {
         title: 'failed to create branch.',

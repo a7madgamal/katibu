@@ -116,7 +116,7 @@
     "react-router-dom": "^5.1.2",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
-    "simple-git": "^1.132.0",
+    "simple-git": "^2.10.0",
     "source-map-support": "^0.5.16",
     "ts-loader": "^6.2.2",
     "universal-user-agent": "5.0.0",

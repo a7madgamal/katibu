@@ -5,7 +5,6 @@ const logger = electronTimber.create({ name: '[SHARED:HELPERS]' })
 
 const getRepoSettingsFromId = async (repoId: string) => {
   const isRenderer = process && process.type === 'renderer'
-  logger.log('getRepoSettingsFromId', { isRenderer })
 
   let store
   if (isRenderer) {
@@ -28,9 +27,6 @@ const getRepoSettingsFromId = async (repoId: string) => {
 }
 
 const validateSettings = (settings: ISettingsState) => {
-  const isRenderer = process && process.type === 'renderer'
-  console.log('validateSettings', { isRenderer })
-
   return (
     settings.githubAuth &&
     settings.githubUserName &&

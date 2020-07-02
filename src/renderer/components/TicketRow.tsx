@@ -66,6 +66,7 @@ const TicketRow: React.FC<ITicketRowProps> = ({
         display: flex;
         flex-direction: column;
         border-bottom: 1px solid ${borderColor};
+        font-size: 18px;
       `}
     >
       <div data-qa-id="title row">
@@ -96,7 +97,7 @@ const TicketRow: React.FC<ITicketRowProps> = ({
 
         <span
           css={css`
-            font-size: 16px;
+            font-size: 18px;
             color: ${titlesColor};
             margin: 5px;
           `}
@@ -142,7 +143,7 @@ const TicketRow: React.FC<ITicketRowProps> = ({
             <FontAwesomeIcon
               icon={relatedBranch.isRemote ? faCloud : faHdd}
               css={css`
-                margin-right: 3px;
+                margin: 0 5px;
                 color: ${relatedBranch.isCheckedout
                   ? activeCardAccentColor
                   : actionsColor};
@@ -151,7 +152,6 @@ const TicketRow: React.FC<ITicketRowProps> = ({
 
             <span
               css={css`
-                margin-right: 3px;
                 cursor: pointer;
               `}
               onClick={async () => {
@@ -254,7 +254,16 @@ const TicketRow: React.FC<ITicketRowProps> = ({
 
       <div data-id="github-rows">
         {relatedPRs.map(
-          ({ id, html_url, number, base, head, title, mergeable_state }) => (
+          ({
+            id,
+            html_url,
+            number,
+            base,
+            head,
+            title,
+            mergeable_state,
+            isChecksGreen,
+          }) => (
             <div data-id="github-row" key={id}>
               <span
                 data-id="github-pr-key"
@@ -265,7 +274,9 @@ const TicketRow: React.FC<ITicketRowProps> = ({
                       ? '#F7BB2F'
                       : mergeable_state === 'blocked' ||
                         mergeable_state === 'dirty'
-                      ? '#F32C3E'
+                      ? isChecksGreen
+                        ? '#d0ffce'
+                        : '#F32C3E'
                       : mergeable_state === 'clean'
                       ? '#7ABB6B'
                       : cardsBGColor
@@ -285,6 +296,9 @@ const TicketRow: React.FC<ITicketRowProps> = ({
                         break
                     }
                   }}
+                  css={css`
+                    margin: 0 5px;
+                  `}
                 />
                 <span
                   onClick={(e) => shell.openExternal(html_url)}
