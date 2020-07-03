@@ -9,7 +9,7 @@ export type TPullRequest = PromiseValue<
 
 export type TExtendedPullRequest = OctokitResponse<
   PromiseValue<ReturnType<InstanceType<typeof Octokit>['pulls']['get']>>['data']
->['data']
+>['data'] & { isChecksGreen: boolean }
 
 export type TPushTaskOptions = Parameters<typeof pushTask>[0]
 

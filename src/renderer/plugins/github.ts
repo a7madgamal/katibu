@@ -53,12 +53,32 @@ const _getMyPRs = async (repoId: string, options = {}) => {
 
 // renderer
 const _extendPRs = async (repoId: string, pulls: TPullRequest) => {
+  const state = getRendererStore().getState()
+  const repoSettings = await getRepoSettingsFromId(repoId)
+
   const extendedPRs: Array<TExtendedPullRequest> = []
+
+  const octokit = new Octokit({
+    auth: state.settings.githubAuth,
+  })
 
   for (const pr of pulls) {
     const { data } = await getPR(pr.head.repo.owner.login, repoId, pr.number)
 
-    extendedPRs.push(data)
+    const checks = await octokit.checks.listForRef({
+      owner: repoSettings.orgID,
+      repo: repoId,
+      ref: pr.head.ref,
+    })
+
+    const dataWithChecks = {
+      ...data,
+      isChecksGreen: checks.data.check_runs.every(
+        (check) => check.conclusion === 'success',
+      ),
+    }
+
+    extendedPRs.push(dataWithChecks)
   }
 
   return extendedPRs

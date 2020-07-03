@@ -13,9 +13,9 @@ const createAppWindow = () => {
 
   mainWindow = new BrowserWindow({
     // show: false,
-    width: 700,
+    width: 900,
     height: 500,
-    x: width / 2 - 700,
+    x: width / 2 - 900,
     y: height / 2 - 500,
     frame: false,
     webPreferences: {
@@ -25,7 +25,7 @@ const createAppWindow = () => {
   })
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
 
   return mainWindow
   // mainWindow.on('closed', () => {
@@ -51,7 +51,7 @@ const createSelectWindow = () => {
   })
 
   selectWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
-  selectWindow.webContents.openDevTools()
+  // selectWindow.webContents.openDevTools()
   selectWindow.webContents.on('did-finish-load', () => {
     selectWindow.webContents.send(IPC_RENDER_NAVIGATE_SELECTOR)
   })

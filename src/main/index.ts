@@ -117,16 +117,12 @@ ipcMain.handle(IPC_SAVE_SETTINGS, async (_e, payload) => {
 })
 
 ipcMain.handle(IPC_GET_BRANCHES, async (_e, repoId: string) => {
-  console.log(IPC_GET_BRANCHES, { repoId })
-
   const branches = await getBranches(repoId)
 
   return branches
 })
 
 ipcMain.handle(IPC_GET_GIT_REMOTE, async (_e, path: string) => {
-  console.log({ path })
-
   const gitRepo = await getRepoFromPath(path)
 
   if (gitRepo) {

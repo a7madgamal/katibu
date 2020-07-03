@@ -129,6 +129,19 @@ export const fetchPRs = (
               () => shell.openExternal(allPRs[i].html_url),
             )
           }
+
+          if (oldPR.isChecksGreen !== allPRs[i].isChecksGreen) {
+            showNotification(
+              {
+                title: allPRs[i].title,
+                body: `PR checks are ${
+                  allPRs[i].isChecksGreen ? '✅ green' : '🔴 red'
+                }`,
+              },
+              true,
+              () => shell.openExternal(allPRs[i].html_url),
+            )
+          }
         } else {
           showNotification(
             {
