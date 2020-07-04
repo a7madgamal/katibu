@@ -95,6 +95,7 @@ app.on('browser-window-focus', (e) => {
   // const now = new Date().getTime()
   // const diff = creationTime ? now - Math.round(creationTime) : true
 
+  // todo: check if settings ready
   mainWindow.webContents.send(IPC_RENDER_REFRESH_TICKETS)
   mainWindow.webContents.send(IPC_RENDER_REFRESH_GIT)
   mainWindow.webContents.send(IPC_RENDER_REFRESH_PRS)
