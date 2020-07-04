@@ -119,7 +119,7 @@ const app: React.FC<TAppProps> = ({
           text-align: right;
         `}
       >
-        <span css={BadgeStyle}>Ctrl + z</span> to show this window
+        <span css={BadgeStyle}>Alt (Option) + z</span> to show this window
       </div>
     </div>
   )

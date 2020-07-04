@@ -103,7 +103,7 @@ app.on('browser-window-focus', (e) => {
 
 function registerShortcuts() {
   okk(
-    globalShortcut.register('Control+z', () => {
+    globalShortcut.register('Alt+z', () => {
       mainWindow.show()
     }),
   )
@@ -173,7 +173,7 @@ ipcMain.handle(IPC_REBASE_BRANCH, async (e, repoId, branchName) => {
     })
   } catch (error) {
     showNotification({
-      title: 'branch rebase failed, fix the conflict',
+      title: 'branch rebase failed',
       body: `${repoId}:${branchName}`,
     })
   }
