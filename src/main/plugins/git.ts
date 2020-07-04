@@ -182,14 +182,14 @@ const createBranch = async (
   try {
     await repo.pull()
   } catch (error) {
-    logger.log('pull failed')
+    logger.log('pull failed', error)
   }
   console.log({ title, fromBranch })
 
   try {
     await repo.checkoutBranch(okk(title), fromBranch)
   } catch (error) {
-    logger.log('checkoutBranch failed')
+    logger.log('checkoutBranch failed', error)
   }
 }
 
