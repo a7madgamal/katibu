@@ -153,6 +153,15 @@ const deleteBranch = async (
   })
 }
 
+const pullActiveBranch = async (repoId: string) => {
+  const repoSettings = await getRepoSettingsFromId(repoId)
+  const gitRepo = await _getGitRepoFromId(repoId)
+
+  const result = await gitRepo.pull(okk(repoSettings.remoteName))
+
+  return result
+}
+
 const getBranches = async (repoId: string) => {
   const repoSettings = await getRepoSettingsFromId(repoId)
   const gitRepo = await _getGitRepoFromId(repoId)
@@ -315,6 +324,7 @@ export {
   createBranchFromTicketId,
   getBranches,
   deleteBranch,
+  pullActiveBranch,
   rebaseLocalBranch,
   checkoutLocalBranch,
   getRemote,

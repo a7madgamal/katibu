@@ -12,7 +12,12 @@ import {
 } from '../../types/branches'
 // @ts-ignore
 import electronTimber from 'electron-timber'
-import { IPC_DELETE_BRANCH, IPC_GET_BRANCHES } from '../../constants'
+import {
+  IPC_DELETE_BRANCH,
+  IPC_GET_BRANCHES,
+  IPC_CHECKOUT_LOCAL_BRANCH,
+  IPC_PULL_BRANCH,
+} from '../../constants'
 import { ipcRenderer } from 'electron'
 import { BranchSummary } from 'simple-git/promise'
 const logger = electronTimber.create({ name: 'branches/actions' })
@@ -84,11 +89,23 @@ export const fetchGit = (): ThunkAction<
         },
         false,
         async () => {
-          await ipcRenderer.invoke(IPC_DELETE_BRANCH, {
+          const deleteResult = await ipcRenderer.invoke(IPC_DELETE_BRANCH, {
             repoId: oldRemoteBranches[i].repoId,
             branchName: oldRemoteBranches[i].name,
             isRemote: false,
           })
+
+          if (deleteResult) {
+            await ipcRenderer.invoke(
+              IPC_CHECKOUT_LOCAL_BRANCH,
+              oldRemoteBranches[i].repoId,
+              'master',
+            )
+            await ipcRenderer.invoke(
+              IPC_PULL_BRANCH,
+              oldRemoteBranches[i].repoId,
+            )
+          }
         },
       )
     }

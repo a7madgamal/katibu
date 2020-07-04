@@ -23,6 +23,7 @@ import {
   rebaseLocalBranch,
   checkoutLocalBranch,
   getBranches,
+  pullActiveBranch,
 } from './plugins/git'
 import { showNotification } from '../shared/plugins/notifications'
 import { pushTask } from './tasks/push'
@@ -47,6 +48,7 @@ import {
   IPC_LOAD_SETTINGS,
   IPC_GET_BRANCHES,
   IPC_SAVE_SETTINGS,
+  IPC_PULL_BRANCH,
 } from '../shared/constants'
 import { getMainStore } from './store'
 import { LOAD_SETTINGS } from '../shared/types/settings'
@@ -157,10 +159,11 @@ ipcMain.handle(IPC_CREATE_BRANCH, async (e, key: string) => {
 ipcMain.handle(
   IPC_DELETE_BRANCH,
   async (e, { repoId, branchName, isRemote }) => {
-    await deleteBranch(repoId, branchName, isRemote, false)
+    const result = await deleteBranch(repoId, branchName, isRemote, false)
 
     mainWindow.webContents.send(IPC_RENDER_REFRESH_PRS)
     mainWindow.webContents.send(IPC_RENDER_REFRESH_GIT)
+    return result
   },
 )
 
@@ -191,6 +194,10 @@ ipcMain.handle(
     mainWindow.webContents.send(IPC_RENDER_REFRESH_GIT)
   },
 )
+
+ipcMain.handle(IPC_PULL_BRANCH, async (e, repoId) => {
+  await pullActiveBranch(repoId)
+})
 
 ipcMain.handle(IPC_CHECKOUT_LOCAL_BRANCH, async (e, repoId, branchName) => {
   const success = await checkoutLocalBranch(repoId, branchName)
