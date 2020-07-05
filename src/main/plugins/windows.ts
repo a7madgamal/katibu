@@ -17,7 +17,7 @@ const createAppWindow = () => {
     height: 500,
     x: width / 2 - 900,
     y: height / 2 - 500,
-    frame: false,
+    // frame: false,
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,
@@ -43,7 +43,7 @@ const createSelectWindow = () => {
     x: width / 2 - 300,
     y: height / 2 - 400,
     alwaysOnTop: true,
-    frame: false,
+    // frame: false,
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,

@@ -104,11 +104,11 @@ app.on('browser-window-focus', (e) => {
 })
 
 function registerShortcuts() {
-  okk(
-    globalShortcut.register('Alt+z', () => {
-      mainWindow.show()
-    }),
-  )
+  // okk(
+  globalShortcut.register('Alt+z', () => {
+    mainWindow.show()
+  })
+  // )
 }
 
 ipcMain.handle(IPC_SAVE_SETTINGS, async (_e, payload) => {

@@ -20,7 +20,6 @@ const Toolbar: React.FC<IToolbarProps> = ({ onRefresh, isBusy }) => {
         margin-bottom: 5px;
         padding-bottom: 5px;
         border-bottom: 1px solid gray;
-        -webkit-app-region: drag;
       `}
     >
       <FontAwesomeIcon
