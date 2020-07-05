@@ -284,17 +284,25 @@ const getRemote = async (
   gitRepo: git.SimpleGit,
 ): Promise<TRepoRemote | false> => {
   try {
-    const regex = /https:\/\/github.com\/(?<orgID>.*)\/(?<repoId>.*)\.git$/
     const remoteName = (await gitRepo.raw(['remote'])).split('\n')[0]
 
     const remoteUrl = (
       await gitRepo.raw(['remote', 'get-url', `${okk(remoteName)}`])
     ).split('\n')[0]
 
-    const {
-      // @ts-ignore
-      groups: { orgID, repoId },
-    } = regex.exec(remoteUrl)
+    const match = remoteUrl.match(
+      /github.com[\/|:](?<orgID>.*)\/(?<repoId>.*)\.git$/,
+    )
+
+    let orgID: string = ''
+    let repoId: string = ''
+
+    const groups = match && match.groups
+
+    if (groups) {
+      orgID = groups.orgID
+      repoId = groups.repoId
+    }
 
     okk(orgID)
     okk(repoId)

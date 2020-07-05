@@ -14,7 +14,13 @@
     "tsc": "tsc --noEmit",
     "prettier": "prettier --write src"
   },
-  "keywords": [],
+  "keywords": [
+    "git",
+    "jira",
+    "github",
+    "productivity",
+    "electron"
+  ],
   "author": {
     "name": "Ahmed Hassanein",
     "email": "eng.a7mad.gamal@gmail.com"
