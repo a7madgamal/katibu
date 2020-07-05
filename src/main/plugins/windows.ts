@@ -1,4 +1,4 @@
-import { BrowserWindow, screen, ipcMain } from 'electron'
+import { BrowserWindow, screen, ipcMain, app } from 'electron'
 import {
   IPC_RENDER_NAVIGATE_SELECTOR,
   IPC_CANCEL_SELECT,
@@ -26,11 +26,11 @@ const createAppWindow = () => {
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
   // mainWindow.webContents.openDevTools()
+  mainWindow.on('closed', () => {
+    app.exit()
+  })
 
   return mainWindow
-  // mainWindow.on('closed', () => {
-  //   mainWindow = null
-  // })
 }
 
 const createSelectWindow = () => {
