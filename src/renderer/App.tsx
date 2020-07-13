@@ -80,6 +80,28 @@ const app: React.FC<TAppProps> = ({
         onRefresh={() => fetchData(false)}
       />
 
+      {!pullRequests && !isFetchingPRs && (
+        <div
+          css={css`
+            color: red;
+          `}
+        >
+          Fetching PRs failed, please check your Github settings and internet
+          connection!
+        </div>
+      )}
+
+      {!ticketsData && !isFetchingTickets && (
+        <div
+          css={css`
+            color: red;
+          `}
+        >
+          Fetching tickets failed, please check your Jira settings and internet
+          connection!
+        </div>
+      )}
+
       {ticketsData &&
         ticketsData.map((ticketData) => {
           const relatedPRs =
