@@ -1,6 +1,10 @@
 import { Octokit } from '@octokit/rest'
 import { getRendererStore } from '../../renderer/store'
-import { TPullRequest, TExtendedPullRequest } from '../../shared/types'
+import {
+  TPullRequest,
+  TExtendedPullRequest,
+  CheckConclusion,
+} from '../../shared/types'
 import { getRepoSettingsFromId } from '../../shared/helpers'
 
 // renderer
@@ -71,11 +75,19 @@ const _extendPRs = async (repoId: string, pulls: TPullRequest) => {
       ref: pr.head.ref,
     })
 
+    const checksStatus = checks.data.check_runs.every(
+      (check) => check.conclusion === CheckConclusion.success,
+    )
+      ? CheckConclusion.success
+      : checks.data.check_runs.some(
+          (check) => check.conclusion === CheckConclusion.failure,
+        )
+      ? CheckConclusion.failure
+      : CheckConclusion.neutral
+
     const dataWithChecks = {
       ...data,
-      isChecksGreen: checks.data.check_runs.every(
-        (check) => check.conclusion === 'success',
-      ),
+      checksStatus,
     }
 
     extendedPRs.push(dataWithChecks)

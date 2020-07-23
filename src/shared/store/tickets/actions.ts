@@ -15,7 +15,7 @@ import {
 import { getMyExtendedPRs } from '../../../renderer/plugins/github'
 import { showNotification } from '../../plugins/notifications'
 import { shell } from 'electron'
-import { TExtendedPullRequest } from '../../types'
+import { TExtendedPullRequest, CheckConclusion } from '../../types'
 // @ts-ignore
 import electronTimber from 'electron-timber'
 import { TAppState } from '../../../main/store'
@@ -130,15 +130,30 @@ export const fetchPRs = (
             )
           }
 
-          if (oldPR.isChecksGreen !== allPRs[i].isChecksGreen) {
+          if (
+            oldPR.checksStatus !== allPRs[i].checksStatus &&
+            allPRs[i].checksStatus === CheckConclusion.success
+          ) {
             showNotification(
               {
                 title: allPRs[i].title,
-                body: `PR checks are ${
-                  allPRs[i].isChecksGreen ? '✅ green' : '🔴 red'
-                }`,
+                body: 'PR checks are ✅ green',
               },
               true,
+              () => shell.openExternal(allPRs[i].html_url),
+            )
+          }
+
+          if (
+            oldPR.checksStatus !== allPRs[i].checksStatus &&
+            allPRs[i].checksStatus === CheckConclusion.failure
+          ) {
+            showNotification(
+              {
+                title: allPRs[i].title,
+                body: 'PR checks are 🔴 red',
+              },
+              false,
               () => shell.openExternal(allPRs[i].html_url),
             )
           }

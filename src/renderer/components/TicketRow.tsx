@@ -31,7 +31,11 @@ import { updatePR, generateNewOrCurrentPRLink } from '../plugins/github'
 import { IJiraTicket } from '../../shared/types/tickets'
 import { TBranches } from '../../shared/types/branches'
 import { ticketUrlFromKey } from '../../shared/plugins/jira'
-import { TExtendedPullRequest, TPushTaskOptions } from '../../shared/types'
+import {
+  TExtendedPullRequest,
+  TPushTaskOptions,
+  CheckConclusion,
+} from '../../shared/types'
 import {
   IPC_CHECKOUT_LOCAL_BRANCH,
   IPC_CREATE_BRANCH,
@@ -262,7 +266,7 @@ const TicketRow: React.FC<ITicketRowProps> = ({
             head,
             title,
             mergeable_state,
-            isChecksGreen,
+            checksStatus,
           }) => (
             <div data-id="github-row" key={id}>
               <span
@@ -274,9 +278,11 @@ const TicketRow: React.FC<ITicketRowProps> = ({
                       ? '#F7BB2F'
                       : mergeable_state === 'blocked' ||
                         mergeable_state === 'dirty'
-                      ? isChecksGreen
+                      ? checksStatus === CheckConclusion.success
                         ? '#d0ffce'
-                        : '#F32C3E'
+                        : checksStatus === CheckConclusion.failure
+                        ? '#F32C3E'
+                        : '#444'
                       : mergeable_state === 'clean'
                       ? '#7ABB6B'
                       : cardsBGColor

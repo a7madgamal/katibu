@@ -60,7 +60,7 @@ const getMyTickets: () => Promise<Array<IJiraTicket> | false> = async () => {
     })
     return sortedIssues
   } catch (error) {
-    logger.error({ error })
+    logger.error('jira failed:', { error })
     return false
   }
 }
