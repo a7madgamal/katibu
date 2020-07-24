@@ -262,7 +262,6 @@ const TicketRow: React.FC<ITicketRowProps> = ({
             id,
             html_url,
             number,
-            base,
             head,
             title,
             mergeable_state,
@@ -291,7 +290,7 @@ const TicketRow: React.FC<ITicketRowProps> = ({
               >
                 <FontAwesomeIcon
                   icon={faGithub}
-                  onClick={async (e) => {
+                  onClick={async () => {
                     switch (mergeable_state) {
                       case 'behind':
                         await updatePR(head.repo.name, number)
@@ -307,7 +306,7 @@ const TicketRow: React.FC<ITicketRowProps> = ({
                   `}
                 />
                 <span
-                  onClick={(e) => shell.openExternal(html_url)}
+                  onClick={() => shell.openExternal(html_url)}
                   css={css`
                     cursor: pointer;
                   `}

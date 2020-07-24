@@ -55,6 +55,7 @@ const settings: React.FC<TProps> = ({
   )
 
   const activeSettings = getProfileSettings(settings, activeProfile)
+
   return (
     <div
       css={css`
@@ -122,7 +123,7 @@ const settings: React.FC<TProps> = ({
           }
           return errors
         }}
-        render={({ handleSubmit, pristine, invalid, form }) => (
+        render={({ handleSubmit, invalid, form }) => (
           <form
             onSubmit={handleSubmit}
             css={css`
@@ -138,50 +139,85 @@ const settings: React.FC<TProps> = ({
             >
               Settings:
             </h1>
-            Profile:
-            <select
-              onChange={(e) => setActiveProfile(e.target.value)}
-              value={activeProfile}
+            <div
+              css={css`
+                margin: 24px;
+                padding: 8px;
+                border: 1px solid gray;
+                max-width: 275px;
+              `}
             >
-              {profileIds.map((profileId) => (
-                <option value={profileId}>{profileId}</option>
-              ))}
-            </select>
-            {profileIds.length > 1 && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  const oldProfileIndex = settings.profiles.findIndex(
-                    (profile) => profile.id === activeProfile,
-                  )
-
-                  if (oldProfileIndex !== -1) {
-                    deleteSettingsAction(settings, activeProfile)
-                  } else {
-                    setProfileIds(
-                      profileIds.filter((id) => id !== activeProfile),
-                    )
-                  }
-                }}
+              <h4
+                css={css`
+                  margin: 0 0 10px 0;
+                  color: ${textColor};
+                `}
               >
-                delete
-              </button>
-            )}
-            <input
-              type="text"
-              onChange={(e) => setNewProfile(e.target.value)}
-              value={newProfile}
-            />
-            <button
-              type="button"
-              onClick={(e) => {
-                setProfileIds([...profileIds, newProfile])
-                setActiveProfile(newProfile)
-                setNewProfile('')
-              }}
-            >
-              create profile
-            </button>
+                Settings Profile:
+              </h4>
+              <select
+                css={css`
+                  font-size: 16px;
+                  margin: 0px 8px 8px 0;
+                  min-width: 153px;
+                `}
+                onChange={(e) => {
+                  setActiveProfile(e.target.value)
+                  alert('Click save to update settings')
+                }}
+                value={activeProfile}
+              >
+                {profileIds.map((profileId) => (
+                  <option value={profileId}>{profileId}</option>
+                ))}
+              </select>
+
+              {profileIds.length > 1 && (
+                <button
+                  css={css`
+                    color: darkred;
+                  `}
+                  type="button"
+                  onClick={() => {
+                    const oldProfileIndex = settings.profiles.findIndex(
+                      (profile) => profile.id === activeProfile,
+                    )
+
+                    if (oldProfileIndex !== -1) {
+                      deleteSettingsAction(settings, activeProfile)
+                    } else {
+                      setProfileIds(
+                        profileIds.filter((id) => id !== activeProfile),
+                      )
+                    }
+                  }}
+                >
+                  delete
+                </button>
+              )}
+
+              <div>
+                <input
+                  type="text"
+                  onChange={(e) => setNewProfile(e.target.value)}
+                  value={newProfile}
+                />
+                <button
+                  css={css`
+                    margin: 0 0 0 8px;
+                  `}
+                  type="button"
+                  onClick={() => {
+                    setProfileIds([...profileIds, newProfile])
+                    setActiveProfile(newProfile)
+                    setNewProfile('')
+                  }}
+                >
+                  create profile
+                </button>
+              </div>
+            </div>
+
             <Field name="githubUserName">
               {({ input, meta }) => (
                 <TextFieldWrapper>
@@ -491,7 +527,7 @@ const settings: React.FC<TProps> = ({
             </FieldArray>
             <button
               type="submit"
-              disabled={pristine || invalid}
+              disabled={invalid}
               css={css`
                 margin-top: 20px;
                 font-size: 18px;
