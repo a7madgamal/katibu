@@ -10,9 +10,10 @@ import {
   IPC_REPO_SELECT,
   IPC_HIDE_SELECT,
 } from '../../shared/constants'
+import { getActiveSettings } from '../../shared/helpers'
 
 const connector = connect((state: TAppState) => ({
-  settings: state.settings,
+  settings: getActiveSettings(state.settings),
 }))
 
 type TProps = ConnectedProps<typeof connector>

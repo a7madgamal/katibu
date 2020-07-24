@@ -1,6 +1,11 @@
-import { IRepoSetting, ISettingsState } from './types/settings'
+import {
+  IRepoSetting,
+  ISettingsState,
+  ISettingsProfile,
+} from './types/settings'
 // @ts-ignore
 import electronTimber from 'electron-timber'
+import { INITIAL_SETTINGS } from './constants'
 const logger = electronTimber.create({ name: '[SHARED:HELPERS]' })
 
 const getRepoSettingsFromId = async (repoId: string) => {
@@ -17,7 +22,9 @@ const getRepoSettingsFromId = async (repoId: string) => {
 
   const state = store.getState()
 
-  const repo = state.settings.reposList.find((repo) => repo.repoId === repoId)
+  const repo = getActiveSettings(state.settings).reposList.find(
+    (repo) => repo.repoId === repoId,
+  )
 
   if (repo) {
     return repo
@@ -26,28 +33,55 @@ const getRepoSettingsFromId = async (repoId: string) => {
   }
 }
 
-const validateSettings = (settings: ISettingsState) => {
-  return (
-    settings.githubAuth &&
-    settings.githubUserName &&
-    settings.jiraAuth &&
-    settings.jiraEmail &&
-    settings.jiraHost &&
-    settings.jiraJQL &&
-    // settings.port &&
-    settings.reposList.length &&
-    settings.reposList.reduce(
-      (prev, current: IRepoSetting) =>
-        !!(
-          current.orgID &&
-          current.path &&
-          current.remoteName &&
-          current.repoId &&
-          prev
-        ),
-      true,
-    )
-  )
+const getProfileSettings = (
+  settings: ISettingsState,
+  id: string,
+): ISettingsProfile => {
+  const profile = settings.profiles.find((profile) => profile.id === id)
+
+  if (profile) {
+    return profile
+  } else {
+    logger.log(`cant get profile settings for id: ${id}`)
+    const newProfile = INITIAL_SETTINGS.profiles[0]
+    newProfile.id = id
+
+    return newProfile
+  }
 }
 
-export { getRepoSettingsFromId, validateSettings }
+const getActiveSettings = (settings: ISettingsState) => {
+  const profile = settings.profiles.find(
+    (profile) => profile.id === settings.activeProfile,
+  )
+  if (profile) {
+    return profile
+  } else {
+    throw new Error('cant get profile settings')
+  }
+}
+
+const areSettingsValid = (settings: ISettingsState) =>
+  settings.activeProfile &&
+  settings.profiles &&
+  settings.profiles.every(
+    (profile) =>
+      profile.id &&
+      profile.githubAuth &&
+      profile.githubUserName &&
+      profile.jiraAuth &&
+      profile.jiraEmail &&
+      profile.jiraHost &&
+      profile.jiraJQL &&
+      profile.reposList.length &&
+      profile.reposList.every(
+        (repo) => repo.orgID && repo.path && repo.remoteName && repo.repoId,
+      ),
+  )
+
+export {
+  getRepoSettingsFromId,
+  areSettingsValid,
+  getActiveSettings,
+  getProfileSettings,
+}
