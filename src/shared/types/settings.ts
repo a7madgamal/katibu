@@ -9,7 +9,8 @@ export interface IRepoSetting {
   enableAutoRefresh: boolean
 }
 
-export interface ISettingsState {
+export interface ISettingsProfile {
+  id: string
   reposList: Array<IRepoSetting>
   // port: number
   githubAuth: string
@@ -20,9 +21,18 @@ export interface ISettingsState {
   jiraJQL: string
 }
 
+export interface ISettingsState {
+  activeProfile: string
+  profiles: Array<ISettingsProfile>
+}
+
 interface ISaveSettingsAction {
   type: typeof SAVE_SETTINGS
-  payload: ISettingsState
+  payload: {
+    settings: ISettingsState
+    profileSettings: ISettingsProfile
+    profileId: string
+  }
 }
 
 interface ILoadSettingsAction {

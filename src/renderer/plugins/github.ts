@@ -1,14 +1,18 @@
 import { Octokit } from '@octokit/rest'
 import { getRendererStore } from '../../renderer/store'
-import { TPullRequest, TExtendedPullRequest } from '../../shared/types'
-import { getRepoSettingsFromId } from '../../shared/helpers'
+import {
+  TPullRequest,
+  TExtendedPullRequest,
+  CheckConclusion,
+} from '../../shared/types'
+import { getRepoSettingsFromId, getActiveSettings } from '../../shared/helpers'
 
 // renderer
 const updatePR = async (repoId: string, pullNumber: number) => {
   const state = getRendererStore().getState()
 
   const octokit = new Octokit({
-    auth: state.settings.githubAuth,
+    auth: getActiveSettings(state.settings).githubAuth,
   })
 
   const repoSettings = await getRepoSettingsFromId(repoId)
@@ -28,7 +32,7 @@ const _getMyPRs = async (repoId: string, options = {}) => {
   const state = getRendererStore().getState()
 
   const octokit = new Octokit({
-    auth: state.settings.githubAuth,
+    auth: getActiveSettings(state.settings).githubAuth,
   })
 
   const repoSettings = await getRepoSettingsFromId(repoId)
@@ -47,7 +51,8 @@ const _getMyPRs = async (repoId: string, options = {}) => {
   })
 
   return pulls.filter(
-    (pull) => pull.user.login === state.settings.githubUserName,
+    (pull) =>
+      pull.user.login === getActiveSettings(state.settings).githubUserName,
   )
 }
 
@@ -59,7 +64,7 @@ const _extendPRs = async (repoId: string, pulls: TPullRequest) => {
   const extendedPRs: Array<TExtendedPullRequest> = []
 
   const octokit = new Octokit({
-    auth: state.settings.githubAuth,
+    auth: getActiveSettings(state.settings).githubAuth,
   })
 
   for (const pr of pulls) {
@@ -71,11 +76,19 @@ const _extendPRs = async (repoId: string, pulls: TPullRequest) => {
       ref: pr.head.ref,
     })
 
+    const checksStatus = checks.data.check_runs.every(
+      (check) => check.conclusion === CheckConclusion.success,
+    )
+      ? CheckConclusion.success
+      : checks.data.check_runs.some(
+          (check) => check.conclusion === CheckConclusion.failure,
+        )
+      ? CheckConclusion.failure
+      : CheckConclusion.neutral
+
     const dataWithChecks = {
       ...data,
-      isChecksGreen: checks.data.check_runs.every(
-        (check) => check.conclusion === 'success',
-      ),
+      checksStatus,
     }
 
     extendedPRs.push(dataWithChecks)
@@ -100,7 +113,7 @@ const getPR = async (owner: string, repo: string, prNumber: number) => {
   const state = getRendererStore().getState()
 
   const octokit = new Octokit({
-    auth: state.settings.githubAuth,
+    auth: getActiveSettings(state.settings).githubAuth,
   })
 
   const pull = await octokit.pulls.get({

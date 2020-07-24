@@ -3,6 +3,7 @@ import { IJiraTicket } from '../types/tickets'
 // @ts-ignore
 import electronTimber from 'electron-timber'
 import { settingsPlugin } from '../../main/plugins/settings'
+import { getActiveSettings } from '../helpers'
 
 const logger = electronTimber.create({ name: 'PLUGIN:jira' })
 
@@ -28,14 +29,16 @@ const getMyTickets: () => Promise<Array<IJiraTicket> | false> = async () => {
   const state = getRendererStore().getState()
 
   try {
+    const activeSettings = getActiveSettings(state.settings)
+
     const result: {
       issues: Array<IJiraTicket>
     } = await _jiraClient(
-      state.settings.jiraEmail,
-      state.settings.jiraAuth,
-      state.settings.jiraHost,
+      activeSettings.jiraEmail,
+      activeSettings.jiraAuth,
+      activeSettings.jiraHost,
     ).search.search({
-      jql: state.settings.jiraJQL,
+      jql: activeSettings.jiraJQL,
     })
     // result = await jira.dashboard.getAllDashboards({ startAt: 20 })
     // result = await jira.avatar.getAvatars({ avatarType: 'project' })
@@ -60,7 +63,7 @@ const getMyTickets: () => Promise<Array<IJiraTicket> | false> = async () => {
     })
     return sortedIssues
   } catch (error) {
-    logger.error({ error })
+    logger.error('jira failed:', { error })
     return false
   }
 }
@@ -68,7 +71,9 @@ const getMyTickets: () => Promise<Array<IJiraTicket> | false> = async () => {
 // main
 const branchNameFromTicketId = async (issueKey: string) => {
   let issue
-  const { jiraEmail, jiraAuth, jiraHost } = settingsPlugin.getAll()
+  const { jiraEmail, jiraAuth, jiraHost } = getActiveSettings(
+    settingsPlugin.getAll(),
+  )
 
   try {
     issue = await _jiraClient(jiraEmail, jiraAuth, jiraHost).issue.getIssue({
@@ -107,7 +112,7 @@ const ticketUrlFromKey = async (key: string) => {
 
   const state = getRendererStore().getState()
 
-  return `https://${state.settings.jiraHost}/browse/${key}`
+  return `https://${getActiveSettings(state.settings).jiraHost}/browse/${key}`
 }
 
 export { branchNameFromTicketId, getMyTickets, ticketUrlFromKey }
