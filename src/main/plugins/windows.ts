@@ -65,11 +65,11 @@ const showRepoSelector = () => {
   selectWindow.show()
 
   return new Promise<{ repoId: string; path: string } | false>(
-    (resolve, reject) => {
-      ipcMain.once(IPC_REPO_SELECT, (e, { repoId, path }) => {
+    (resolve, _reject) => {
+      ipcMain.once(IPC_REPO_SELECT, (_e, { repoId, path }) => {
         resolve({ repoId, path })
       })
-      ipcMain.once(IPC_CANCEL_SELECT, (e) => {
+      ipcMain.once(IPC_CANCEL_SELECT, (_e) => {
         resolve(undefined)
       })
     },

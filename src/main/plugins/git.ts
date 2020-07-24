@@ -31,7 +31,7 @@ const deleteBranch = async (
   isRemote: boolean,
   force: boolean,
 ): Promise<boolean> => {
-  return new Promise(async (resolve, reject) => {
+  return new Promise(async (resolve, _reject) => {
     const repoSettings = await getRepoSettingsFromId(repoId)
 
     const gitRepo = await _getGitRepoFromId(repoId)

@@ -31,15 +31,15 @@ import {
 
 const customHistory = createHashHistory()
 
-ipcRenderer.on(IPC_RENDER_NAVIGATE_SELECTOR, (event) => {
+ipcRenderer.on(IPC_RENDER_NAVIGATE_SELECTOR, (_event) => {
   customHistory.replace('/select')
 })
 
-ipcRenderer.on(IPC_RENDER_NAVIGATE_HOME, (event) => {
+ipcRenderer.on(IPC_RENDER_NAVIGATE_HOME, (_event) => {
   customHistory.replace('/')
 })
 
-ipcRenderer.on(IPC_RENDER_REFRESH_TICKETS, (event) => {
+ipcRenderer.on(IPC_RENDER_REFRESH_TICKETS, (_event) => {
   fetchTickets(false)(
     getRendererStore().dispatch,
     getRendererStore().getState,
@@ -47,7 +47,7 @@ ipcRenderer.on(IPC_RENDER_REFRESH_TICKETS, (event) => {
   )
 })
 
-ipcRenderer.on(IPC_RENDER_REFRESH_PRS, (event) => {
+ipcRenderer.on(IPC_RENDER_REFRESH_PRS, (_event) => {
   fetchPRs(false)(
     getRendererStore().dispatch,
     getRendererStore().getState,
@@ -55,7 +55,7 @@ ipcRenderer.on(IPC_RENDER_REFRESH_PRS, (event) => {
   )
 })
 
-ipcRenderer.on(IPC_RENDER_REFRESH_GIT, (event) => {
+ipcRenderer.on(IPC_RENDER_REFRESH_GIT, (_event) => {
   fetchGit()(getRendererStore().dispatch, getRendererStore().getState, null)
 })
 

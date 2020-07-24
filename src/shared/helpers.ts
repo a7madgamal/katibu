@@ -1,8 +1,4 @@
-import {
-  IRepoSetting,
-  ISettingsState,
-  ISettingsProfile,
-} from './types/settings'
+import { ISettingsState, ISettingsProfile } from './types/settings'
 // @ts-ignore
 import electronTimber from 'electron-timber'
 import { INITIAL_SETTINGS } from './constants'

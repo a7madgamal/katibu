@@ -2,7 +2,7 @@ import { app, remote } from 'electron'
 import path from 'path'
 import fs from 'fs'
 import { okk } from '../helpers'
-import { ISettingsState, ISettingsProfile } from '../../shared/types/settings'
+import { ISettingsState } from '../../shared/types/settings'
 // @ts-ignore
 import electronTimber from 'electron-timber'
 import { INITIAL_SETTINGS } from '../../shared/constants'

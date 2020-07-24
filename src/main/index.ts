@@ -14,7 +14,6 @@ import { app, globalShortcut, ipcMain, BrowserWindow } from 'electron'
 // import { setContextMenu } from '../plugins/tray'
 import { settingsPlugin } from './plugins/settings'
 import { createAppWindow, createSelectWindow } from './plugins/windows'
-import { okk } from './helpers'
 import {
   getRepoFromPath,
   getRemote,
@@ -92,7 +91,7 @@ app.on('ready', () => {
   // getInfo()
 })
 
-app.on('browser-window-focus', (e) => {
+app.on('browser-window-focus', (_e) => {
   // const creationTime = process.getCreationTime()
   // const now = new Date().getTime()
   // const diff = creationTime ? now - Math.round(creationTime) : true
@@ -112,7 +111,6 @@ function registerShortcuts() {
 }
 
 ipcMain.handle(IPC_SAVE_SETTINGS, async (_e, settings) => {
-
   settingsPlugin.save(settings)
 
   return true
@@ -136,13 +134,13 @@ ipcMain.handle(IPC_GET_GIT_REMOTE, async (_e, path: string) => {
   }
 })
 
-ipcMain.handle(IPC_LOAD_SETTINGS, async (e) => {
+ipcMain.handle(IPC_LOAD_SETTINGS, async (_e) => {
   const settings = settingsPlugin.getAll()
 
   return settings
 })
 
-ipcMain.handle(IPC_CREATE_BRANCH, async (e, key: string) => {
+ipcMain.handle(IPC_CREATE_BRANCH, async (_e, key: string) => {
   const result = await createBranchFromTicketId(key)
 
   if (result) {
@@ -157,7 +155,7 @@ ipcMain.handle(IPC_CREATE_BRANCH, async (e, key: string) => {
 
 ipcMain.handle(
   IPC_DELETE_BRANCH,
-  async (e, { repoId, branchName, isRemote }) => {
+  async (_e, { repoId, branchName, isRemote }) => {
     const result = await deleteBranch(repoId, branchName, isRemote, false)
 
     mainWindow.webContents.send(IPC_RENDER_REFRESH_PRS)
@@ -166,7 +164,7 @@ ipcMain.handle(
   },
 )
 
-ipcMain.handle(IPC_REBASE_BRANCH, async (e, repoId, branchName) => {
+ipcMain.handle(IPC_REBASE_BRANCH, async (_e, repoId, branchName) => {
   try {
     await rebaseLocalBranch(repoId, branchName)
     showNotification({
@@ -186,7 +184,7 @@ ipcMain.handle(IPC_REBASE_BRANCH, async (e, repoId, branchName) => {
 ipcMain.handle(
   IPC_PUSH_BRANCH,
   async (
-    e,
+    _e,
     { repoId, skipChecks, branchName }: Parameters<typeof pushTask>[0],
   ) => {
     await pushTask({ repoId, skipChecks, branchName })
@@ -194,11 +192,11 @@ ipcMain.handle(
   },
 )
 
-ipcMain.handle(IPC_PULL_BRANCH, async (e, repoId) => {
+ipcMain.handle(IPC_PULL_BRANCH, async (_e, repoId) => {
   await pullActiveBranch(repoId)
 })
 
-ipcMain.handle(IPC_CHECKOUT_LOCAL_BRANCH, async (e, repoId, branchName) => {
+ipcMain.handle(IPC_CHECKOUT_LOCAL_BRANCH, async (_e, repoId, branchName) => {
   const success = await checkoutLocalBranch(repoId, branchName)
 
   if (success) {

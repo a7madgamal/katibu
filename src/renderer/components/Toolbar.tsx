@@ -1,6 +1,6 @@
 /** @jsx jsx */
 
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import { jsx, css } from '@emotion/core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
