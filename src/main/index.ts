@@ -111,10 +111,9 @@ function registerShortcuts() {
   // )
 }
 
-ipcMain.handle(IPC_SAVE_SETTINGS, async (_e, payload) => {
-  console.log(IPC_SAVE_SETTINGS, { payload })
+ipcMain.handle(IPC_SAVE_SETTINGS, async (_e, settings) => {
 
-  settingsPlugin.save(payload)
+  settingsPlugin.save(settings)
 
   return true
 })

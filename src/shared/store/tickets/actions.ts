@@ -19,6 +19,7 @@ import { TExtendedPullRequest, CheckConclusion } from '../../types'
 // @ts-ignore
 import electronTimber from 'electron-timber'
 import { TAppState } from '../../../main/store'
+import { getActiveSettings } from '../../helpers'
 
 const logger = electronTimber.create({ name: 'tickets/actions' })
 
@@ -99,13 +100,14 @@ export const fetchPRs = (
   getState,
 ) => {
   const state = getState()
+  const profileSettings = getActiveSettings(state.settings)
   const oldPRs = state.tickets.pullRequests
   let allPRs: Array<TExtendedPullRequest> = []
 
   dispatch({ type: LOAD_PRS })
 
   try {
-    for (const repo of state.settings.reposList) {
+    for (const repo of profileSettings.reposList) {
       if (repo.enableAutoRefresh) {
         const pulls = await getMyExtendedPRs(repo.repoId)
         allPRs = [...allPRs, ...pulls]

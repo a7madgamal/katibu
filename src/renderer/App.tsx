@@ -14,7 +14,7 @@ import { Toolbar } from './components/Toolbar'
 import { TicketRow } from './components/TicketRow'
 import { RouteComponentProps } from 'react-router'
 import { BadgeStyle } from './components/styles'
-import { validateSettings } from '../shared/helpers'
+import { areSettingsValid } from '../shared/helpers'
 
 const mapState = (state: TAppState) => ({
   tickets: state.tickets,
@@ -42,7 +42,7 @@ const app: React.FC<TAppProps> = ({
   history,
 }) => {
   const fetchData = (isFirstTime: boolean) => {
-    if (validateSettings(settings)) {
+    if (areSettingsValid(settings)) {
       fetchTicketsAction(isFirstTime)
       fetchPRsAction(isFirstTime)
       fetchGitAction()

@@ -21,14 +21,19 @@ const IPC_SAVE_SETTINGS = 'IPC_SAVE_SETTINGS'
 const IPC_LOAD_SETTINGS = 'IPC_LOAD_SETTINGS'
 
 export const INITIAL_SETTINGS: ISettingsState = {
-  reposList: [],
-  // port: 3456,
-  githubAuth: '',
-  githubUserName: '',
-  jiraHost: '',
-  jiraEmail: '',
-  jiraAuth: '',
-  jiraJQL: 'assignee in (currentUser())',
+  activeProfile: 'default',
+  profiles: [
+    {
+      id: 'default',
+      reposList: [],
+      githubAuth: '',
+      githubUserName: '',
+      jiraHost: '',
+      jiraEmail: '',
+      jiraAuth: '',
+      jiraJQL: 'assignee in (currentUser())',
+    },
+  ],
 }
 
 export {
