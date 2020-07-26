@@ -140,6 +140,7 @@
     "@electron-forge/plugin-webpack": "6.0.0-beta.51",
     "@electron-forge/publisher-github": "6.0.0-beta.51",
     "@marshallofsound/webpack-asset-relocator-loader": "^0.5.0",
+    "@semantic-release/changelog": "^5.0.1",
     "@types/body-parser": "^1.19.0",
     "@types/electron-devtools-installer": "^2.2.0",
     "@types/express": "4.17.3",
