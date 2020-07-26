@@ -9,7 +9,8 @@
     "start": "yarn tsc && electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "release": "electron-forge publish",
+    "release": "semantic-release",
+    "_release": "electron-forge publish",
     "lint:css": "stylelint './src/**/*.tsx'",
     "tsc": "tsc --noEmit",
     "prettier": "prettier --write src"
