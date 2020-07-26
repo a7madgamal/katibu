@@ -158,6 +158,7 @@
     "node-loader": "^0.6.0",
     "prettier": "^2.0.5",
     "redux-devtools-extension": "^2.13.8",
+    "semantic-release": "^17.1.1",
     "style-loader": "^1.1.3",
     "stylelint": "^13.2.1",
     "stylelint-config-recommended": "^3.0.0",
