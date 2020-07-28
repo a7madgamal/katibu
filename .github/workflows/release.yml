@@ -58,7 +58,7 @@ jobs:
         run: |
           yarn install --frozen-lockfile
           yarn make
-          ls -R out/make
+          ls -R out/
           echo "::set-env name=DEB_ASSET_NAME::`find out/make/deb/x64/ -name "*.deb" -exec basename {} \;`"
           echo "::set-env name=RPM_ASSET_NAME::`find out/make/rpm/x64/ -name "*.rpm" -exec basename {} \;`"
 
