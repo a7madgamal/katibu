@@ -59,6 +59,7 @@ jobs:
           yarn install --frozen-lockfile
           yarn make
           ls -R out/
+          tar -zcvf katibu-linux-x64.tar.gz out/katibu-linux-x64
           echo "::set-env name=DEB_ASSET_NAME::`find out/make/deb/x64/ -name "*.deb" -exec basename {} \;`"
           echo "::set-env name=RPM_ASSET_NAME::`find out/make/rpm/x64/ -name "*.rpm" -exec basename {} \;`"
 
@@ -71,6 +72,16 @@ jobs:
           asset_path: './out/make/deb/x64/${{ env.DEB_ASSET_NAME }}'
           asset_name: ${{ env.DEB_ASSET_NAME }}
           asset_content_type: application/vnd.debian.binary-package
+
+      - name: Upload Release Asset (Ubuntu - raw)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.prepare_release.outputs.upload_url }}
+          asset_path: './katibu-linux-x64.tar.gz'
+          asset_name: katibu-linux-x64.tar.gz
+          asset_content_type: application/gzip
 
       - name: Upload Release Asset (Ubuntu - rpm)
         uses: actions/upload-release-asset@v1
