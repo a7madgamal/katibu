@@ -70,7 +70,7 @@ const showRepoSelector = () => {
         resolve({ repoId, path })
       })
       ipcMain.once(IPC_CANCEL_SELECT, (_e) => {
-        resolve(undefined)
+        resolve(false)
       })
     },
   )

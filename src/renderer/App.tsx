@@ -3,7 +3,7 @@
 import { hot } from 'react-hot-loader/root'
 
 import React, { useEffect } from 'react'
-import { css, jsx } from '@emotion/core'
+import { css, jsx } from '@emotion/react'
 
 import { fetchTickets, fetchPRs } from '../shared/store/tickets/actions'
 import { fetchGit } from '../shared/store/branches/actions'
@@ -52,7 +52,8 @@ const app: React.FC<TAppProps> = ({
   }
 
   useEffect(() => {
-    const int = setInterval(fetchData, 1000 * 60 * 5)
+    // TODO: make it option
+    const int = setInterval(fetchData, 1000 * 60 * 2)
 
     fetchData(true)
 

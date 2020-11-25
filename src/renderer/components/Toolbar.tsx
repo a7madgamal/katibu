@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { jsx, css } from '@emotion/core'
+import { jsx, css } from '@emotion/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { ClickableBadgeStyle, BadgeStyle } from './styles'
