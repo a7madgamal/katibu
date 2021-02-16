@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/a7madgamal/katibu/compare/v1.4.3-beta...v1.5.0-beta) (2021-02-16)
+
+
+### Features
+
+* KTB-61: detect starting time show notification after ([#29](https://github.com/a7madgamal/katibu/issues/29)) ([fde8b8f](https://github.com/a7madgamal/katibu/commit/fde8b8feef405e7c1a08688f0cac1a234fada4b7))
+
 ## [1.4.3](https://github.com/a7madgamal/katibu/compare/v1.4.2-beta...v1.4.3-beta) (2020-07-28)
 
 

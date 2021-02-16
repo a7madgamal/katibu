@@ -2,7 +2,7 @@
   "name": "katibu",
   "private": true,
   "productName": "katibu",
-  "version": "1.4.3",
+  "version": "1.5.0",
   "description": "THE helper tool you need for modern development",
   "repository": "https://github.com/a7madgamal/katibu",
   "main": ".webpack/main",
