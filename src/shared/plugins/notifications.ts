@@ -24,7 +24,7 @@ const showNotification = (
   //   console.log({ e, index })
   // })
 
-  autoClose && setTimeout(() => notification.close(), 5000)
+  autoClose && setTimeout(() => notification.close(), 10000)
 
   notification.show()
 

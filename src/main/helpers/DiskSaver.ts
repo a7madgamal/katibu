@@ -2,18 +2,16 @@ import { app, remote } from 'electron'
 import path from 'path'
 import fs from 'fs'
 import { okk } from '../helpers'
-import { ISettingsState } from '../../shared/types/settings'
 // @ts-ignore
 import electronTimber from 'electron-timber'
-import { INITIAL_SETTINGS } from '../../shared/constants'
 
 const logger = electronTimber.create({ name: 'DiskSaver' })
 
-class DiskSaver {
+class DiskSaver<Schema> {
   path: string
-  data: ISettingsState
+  data: Schema
 
-  constructor(opts: { configName: string; defaults: ISettingsState }) {
+  constructor(opts: { configName: string; defaults: Schema }) {
     const userDataPath = (app || remote.app).getPath('userData')
 
     this.path = path.join(okk(userDataPath), opts.configName + '.json')
@@ -25,9 +23,9 @@ class DiskSaver {
     try {
       this.data = readDataFile(this.path)
     } catch (error) {
-      logger.error('DiskSaver: readin failed, resetting', error)
+      logger.error('DiskSaver: reading failed, resetting', error)
 
-      this.data = INITIAL_SETTINGS
+      this.data = opts.defaults
     }
   }
 
@@ -35,9 +33,9 @@ class DiskSaver {
     return this.data
   }
 
-  save(dataObj: ISettingsState) {
+  save(dataObj: Schema) {
     const data = JSON.stringify(dataObj)
-    logger.log('DiskSaver: saving', data)
+    logger.log(`DiskSaver: saving "${this.path}"`, data)
 
     try {
       fs.writeFileSync(this.path, data)
