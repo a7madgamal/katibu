@@ -4,7 +4,6 @@ import {
   forwardToMain,
   replayActionRenderer,
   getInitialStateRenderer,
-  // @ts-ignore
 } from 'electron-redux'
 
 import { settingsReducer } from '../shared/store/settings/reducers'
@@ -17,7 +16,8 @@ const rootReducer = combineReducers({
   branches: branchesReducer,
 })
 
-const initialState = getInitialStateRenderer()
+// todo: check
+const initialState = getInitialStateRenderer<{}>()
 
 const store = createStore(
   rootReducer,

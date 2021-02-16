@@ -11,8 +11,7 @@ import { Form, Field } from 'react-final-form'
 import arrayMutators from 'final-form-arrays'
 import { FieldArray } from 'react-final-form-arrays'
 import { TAppState } from '../../main/store'
-import { jsx } from '@emotion/core'
-import css from '@emotion/css'
+import { jsx, css } from '@emotion/react'
 import { shell, ipcRenderer } from 'electron'
 import { folderPicker } from '../plugins/dialogs'
 
@@ -350,6 +349,32 @@ const settings: React.FC<TProps> = ({
                 </TextFieldWrapper>
               )}
             </Field>
+
+            <Field name="isTimeTrackerEnabled">
+              {({ input }) => {
+                return (
+                  <div>
+                    <input
+                      {...input}
+                      {...(input.value ? { checked: true } : {})}
+                      css={css`
+                        display: inline;
+                      `}
+                      type="checkbox"
+                    />
+                    <Label
+                      css={css`
+                        display: inline;
+                      `}
+                    >
+                      enable time-tracking notifications (changes require app
+                      restart)
+                    </Label>
+                  </div>
+                )
+              }}
+            </Field>
+
             <h1
               css={css`
                 margin: 0;

@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { ipcRenderer } from 'electron'
-import { css, jsx } from '@emotion/core'
+import { css, jsx } from '@emotion/react'
 import { connect, ConnectedProps } from 'react-redux'
 import { TAppState } from '../../main/store'
 import {

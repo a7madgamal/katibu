@@ -9,7 +9,13 @@ import electronUnhandled from 'electron-unhandled'
 
 electronUnhandled({ showDialog: true })
 
-import { app, globalShortcut, ipcMain, BrowserWindow } from 'electron'
+import {
+  app,
+  globalShortcut,
+  ipcMain,
+  BrowserWindow,
+  powerMonitor,
+} from 'electron'
 
 // import { setContextMenu } from '../plugins/tray'
 import { settingsPlugin } from './plugins/settings'
@@ -48,9 +54,12 @@ import {
   IPC_GET_BRANCHES,
   IPC_SAVE_SETTINGS,
   IPC_PULL_BRANCH,
+  INITIAL_PROFILE,
 } from '../shared/constants'
 import { getMainStore } from './store'
 import { LOAD_SETTINGS } from '../shared/types/settings'
+import { TimeTracker } from './plugins/timer'
+import { getProfileSettings } from '../shared/helpers'
 
 const logger = electronTimber.create({ name: 'index' })
 
@@ -67,11 +76,36 @@ app.on('ready', () => {
   const store = getMainStore()
   const payload = settingsPlugin.getAll()
 
+  // make sure we get any new defaults
+  payload.profiles = payload.profiles.map((profile) => {
+    return {
+      ...INITIAL_PROFILE,
+      ...profile,
+    }
+  })
+
   store.dispatch({ type: LOAD_SETTINGS, payload })
 
   mainWindow = createAppWindow()
   selectWindow = createSelectWindow()
   // setContextMenu()
+  if (getProfileSettings(payload, payload.activeProfile).isTimeTrackerEnabled) {
+    var timeTracker = new TimeTracker()
+
+    powerMonitor.on('shutdown', () => {
+      console.log('powerMonitor shutdown')
+      timeTracker.onShutdown()
+    })
+
+    powerMonitor.on('lock-screen', () => {
+      console.log('powerMonitor lock-screen')
+      timeTracker.onLockScreen()
+    })
+    powerMonitor.on('unlock-screen', () => {
+      console.log('powerMonitor unlock-screen')
+      timeTracker.onUnlockScreen()
+    })
+  }
 
   // todo: enable with port
   // try {
@@ -272,3 +306,10 @@ process.on('uncaughtException', (error) => {
 //   }
 // })
 // export { mainWindow, selectWindow }
+
+// powerMonitor.on('suspend', () => {
+//   console.log('powerMonitor suspend')
+// })
+// powerMonitor.on('resume', () => {
+//   console.log('powerMonitor resume')
+// })

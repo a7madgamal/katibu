@@ -19,6 +19,7 @@ export interface ISettingsProfile {
   jiraEmail: string
   jiraAuth: string
   jiraJQL: string
+  isTimeTrackerEnabled: boolean
 }
 
 export interface ISettingsState {

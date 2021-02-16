@@ -1,4 +1,4 @@
-import { ISettingsState } from './types/settings'
+import { ISettingsProfile, ISettingsState } from './types/settings'
 
 const IPC_RENDER_NAVIGATE_SELECTOR = 'IPC_RENDER_NAVIGATE_SELECTOR'
 const IPC_RENDER_NAVIGATE_HOME = 'IPC_RENDER_NAVIGATE_HOME'
@@ -20,20 +20,21 @@ const IPC_RELOAD = 'IPC_RELOAD'
 const IPC_SAVE_SETTINGS = 'IPC_SAVE_SETTINGS'
 const IPC_LOAD_SETTINGS = 'IPC_LOAD_SETTINGS'
 
+export const INITIAL_PROFILE: ISettingsProfile = {
+  id: 'default',
+  reposList: [],
+  githubAuth: '',
+  githubUserName: '',
+  jiraHost: '',
+  jiraEmail: '',
+  jiraAuth: '',
+  jiraJQL: 'assignee in (currentUser())',
+  isTimeTrackerEnabled: true,
+}
+
 export const INITIAL_SETTINGS: ISettingsState = {
   activeProfile: 'default',
-  profiles: [
-    {
-      id: 'default',
-      reposList: [],
-      githubAuth: '',
-      githubUserName: '',
-      jiraHost: '',
-      jiraEmail: '',
-      jiraAuth: '',
-      jiraJQL: 'assignee in (currentUser())',
-    },
-  ],
+  profiles: [INITIAL_PROFILE],
 }
 
 export {

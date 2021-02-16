@@ -167,7 +167,7 @@ const getBranches = async (repoId: string) => {
   const gitRepo = await _getGitRepoFromId(repoId)
 
   try {
-    await gitRepo.fetch(okk(repoSettings.remoteName), undefined, {
+    await gitRepo.fetch(okk(repoSettings.remoteName), {
       '--prune': null,
     })
   } catch (error) {
