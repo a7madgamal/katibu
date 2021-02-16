@@ -4,6 +4,7 @@
 
 - The ultimate tool for the super-lazy, 10x, extremely busy agile developer.
 - Connect Jira, git, Github in one place. How? check the table to know what you're missing 😱
+- AMAZING!
 
 ## شرح للبرنامج باللغة العربية
 
@@ -19,7 +20,7 @@ https://youtu.be/FXFyHAY3Br0
 |                                                    you need to open a PR. you open githup, find the repo, you type the PR title and click open                                                    |                                click on the github icon to open the current PR page OR a new PR page with a the perfect title, even if you push a single commit only ;)                                |
 | there are checks and they take LONG time and focus, then you have to wait for approvals before having a mergable PR. Oh no, master changed and you need to update your PR and run checks again 😡 |                                               you get a notification when a new related PR is detected or when the status change (blocked or unblocked).                                               |
 |            you FINALLY merge your PR, you delete the remote branch, switch to master, remove the local branch (or worse, you dont!). wait, deleting failed so you try again with force            | when a remote branch is deleted you get a notification to delete the local branch, you click it and it's gone (another one if force is needed) and BOOM! you're on updated master again ready to roll. |
-|            you lose yourself in work and have a shitty work-life balance            | you get an hourly reminder of how many hours left in your workday. you get a break reminder after 4 hours and one last reminder when you finish your 8 hours 🎉 it's counts screen-on time only |
+|                                                                   you lose yourself in work and have a shitty work-life balance                                                                   |    you get an hourly reminder of how many hours left in your workday. you get a break reminder after 4 hours and one last reminder when you finish your 8 hours 🎉 it's counts screen-on time only     |
 
 # IMPORTANT: because I can't sign my app (I need to pay Apple \$100 yearly 🤦🏻‍♂️) you need to do this:
 
