@@ -21,6 +21,7 @@ class TimeTracker {
 
   resumeTicker() {
     this.loadState()
+    this.pauseTicker()
     this.intervalID = setInterval(() => {
       this.tick()
     }, this.checkIntervalMinutes * 1000 * 60)
@@ -59,7 +60,6 @@ class TimeTracker {
     const todaysDateString = new Date().toISOString()
 
     if (isWeekend(todaysDate)) {
-      console.log('enjoy the weekend')
       return
     }
 
@@ -73,10 +73,13 @@ class TimeTracker {
       }
 
       if (!this.isSameDay(todaysDateString, newState.currentDate)) {
-        showNotification({
-          title: `It's a new working day, have fun!`,
-          body: '',
-        })
+        showNotification(
+          {
+            title: `It's a new working day, have fun!`,
+            body: '',
+          },
+          false,
+        )
 
         this.stateDiskSaver.save(defaultState)
         newState = defaultState
@@ -104,10 +107,13 @@ class TimeTracker {
             false,
           )
         } else {
-          showNotification({
-            title: `Nice! you spent ${newState.hoursCounter} hours working`,
-            body: '',
-          })
+          showNotification(
+            {
+              title: `Nice! you spent ${newState.hoursCounter} hours working`,
+              body: '',
+            },
+            false,
+          )
         }
       }
 

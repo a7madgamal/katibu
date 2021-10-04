@@ -9,6 +9,7 @@ const showNotification = (
 ) => {
   const notification = new _Notification({
     silent: true,
+    timeoutType: autoClose ? 'default' : 'never',
     ...options,
     // hasReply: true,
     // actions: [{ type: 'button', text: 'obba' }],
