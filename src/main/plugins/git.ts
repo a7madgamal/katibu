@@ -2,7 +2,6 @@ import * as git from 'simple-git/promise'
 
 import { okk } from '../helpers'
 import { getRepoSettingsFromId } from '../../shared/helpers'
-import { showRepoSelector } from './windows'
 import { branchNameFromTicketId } from '../../shared/plugins/jira'
 import { showNotification } from '../../shared/plugins/notifications'
 import { IRepoSetting } from '../../shared/types/settings'
@@ -235,11 +234,7 @@ const pushBranch = async ({
 const createBranchFromTicketId = async (ticketId: string) => {
   try {
     const newBranchName = await branchNameFromTicketId(ticketId)
-    const settings = await showRepoSelector()
-
-    if (!settings) {
-      return false
-    }
+    const settings = await getRepoSettingsFromId()
 
     await createBranch(okk(settings.path), okk(newBranchName))
 

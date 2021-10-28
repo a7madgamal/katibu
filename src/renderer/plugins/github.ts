@@ -5,14 +5,17 @@ import {
   TExtendedPullRequest,
   CheckConclusion,
 } from '../../shared/types'
-import { getRepoSettingsFromId, getActiveSettings } from '../../shared/helpers'
+import {
+  getRepoSettingsFromId,
+  getActiveSettingsProfile,
+} from '../../shared/helpers'
 
 // renderer
 const updatePR = async (repoId: string, pullNumber: number) => {
   const state = getRendererStore().getState()
 
   const octokit = new Octokit({
-    auth: getActiveSettings(state.settings).githubAuth,
+    auth: getActiveSettingsProfile(state.settings).githubAuth,
   })
 
   const repoSettings = await getRepoSettingsFromId(repoId)
@@ -32,7 +35,7 @@ const _getMyPRs = async (repoId: string, options = {}) => {
   const state = getRendererStore().getState()
 
   const octokit = new Octokit({
-    auth: getActiveSettings(state.settings).githubAuth,
+    auth: getActiveSettingsProfile(state.settings).githubAuth,
   })
 
   const repoSettings = await getRepoSettingsFromId(repoId)
@@ -52,7 +55,8 @@ const _getMyPRs = async (repoId: string, options = {}) => {
 
   return pulls.filter(
     (pull) =>
-      pull.user.login === getActiveSettings(state.settings).githubUserName,
+      pull.user.login ===
+      getActiveSettingsProfile(state.settings).githubUserName,
   )
 }
 
@@ -64,7 +68,7 @@ const _extendPRs = async (repoId: string, pulls: TPullRequest) => {
   const extendedPRs: Array<TExtendedPullRequest> = []
 
   const octokit = new Octokit({
-    auth: getActiveSettings(state.settings).githubAuth,
+    auth: getActiveSettingsProfile(state.settings).githubAuth,
   })
 
   for (const pr of pulls) {
@@ -113,7 +117,7 @@ const getPR = async (owner: string, repo: string, prNumber: number) => {
   const state = getRendererStore().getState()
 
   const octokit = new Octokit({
-    auth: getActiveSettings(state.settings).githubAuth,
+    auth: getActiveSettingsProfile(state.settings).githubAuth,
   })
 
   const pull = await octokit.pulls.get({

@@ -19,7 +19,7 @@ import { TExtendedPullRequest, CheckConclusion } from '../../types'
 // @ts-ignore
 import electronTimber from 'electron-timber'
 import { TAppState } from '../../../main/store'
-import { getActiveSettings } from '../../helpers'
+import { getActiveSettingsProfile } from '../../helpers'
 
 const logger = electronTimber.create({ name: 'tickets/actions' })
 
@@ -100,7 +100,7 @@ export const fetchPRs = (
   getState,
 ) => {
   const state = getState()
-  const profileSettings = getActiveSettings(state.settings)
+  const profileSettings = getActiveSettingsProfile(state.settings)
   const oldPRs = state.tickets.pullRequests
   let allPRs: Array<TExtendedPullRequest> = []
 

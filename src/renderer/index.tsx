@@ -15,14 +15,12 @@ import { Provider } from 'react-redux'
 
 import { Settings } from './modals/Settings'
 import { App } from './App'
-import { Select } from './modals/Select'
 import { getRendererStore } from '../renderer/store'
 import { ErrorBoundary } from './ErrorBoundary'
 import { ipcRenderer } from 'electron'
 import { fetchTickets, fetchPRs } from '../shared/store/tickets/actions'
 import { fetchGit } from '../shared/store/branches/actions'
 import {
-  IPC_RENDER_NAVIGATE_SELECTOR,
   IPC_RENDER_REFRESH_TICKETS,
   IPC_RENDER_REFRESH_PRS,
   IPC_RENDER_REFRESH_GIT,
@@ -30,10 +28,6 @@ import {
 } from '../shared/constants'
 
 const customHistory = createHashHistory()
-
-ipcRenderer.on(IPC_RENDER_NAVIGATE_SELECTOR, (_event) => {
-  customHistory.replace('/select')
-})
 
 ipcRenderer.on(IPC_RENDER_NAVIGATE_HOME, (_event) => {
   customHistory.replace('/')
@@ -66,7 +60,6 @@ render(
         <Router history={customHistory}>
           <Route exact path="/" component={App} />
           <Route exact path="/settings" component={Settings} />
-          <Route exact path="/select" component={Select} />
         </Router>
       </Provider>
     </ErrorBoundary>

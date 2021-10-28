@@ -20,7 +20,7 @@ import {
 } from '../../constants'
 import { ipcRenderer } from 'electron'
 import { BranchSummary } from 'simple-git/promise'
-import { getActiveSettings } from '../../helpers'
+import { getActiveSettingsProfile } from '../../helpers'
 const logger = electronTimber.create({ name: 'branches/actions' })
 
 export const fetchGit = (): ThunkAction<
@@ -34,7 +34,7 @@ export const fetchGit = (): ThunkAction<
   const state = getState()
   let newBranches: TBranches = []
 
-  for (const repo of getActiveSettings(state.settings).reposList) {
+  for (const repo of getActiveSettingsProfile(state.settings).reposList) {
     if (!repo.enableAutoRefresh) {
       continue
     }

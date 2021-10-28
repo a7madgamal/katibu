@@ -1,9 +1,4 @@
-import { BrowserWindow, screen, ipcMain, app } from 'electron'
-import {
-  IPC_RENDER_NAVIGATE_SELECTOR,
-  IPC_CANCEL_SELECT,
-  IPC_REPO_SELECT,
-} from '../../shared/constants'
+import { BrowserWindow, screen, app } from 'electron'
 
 var mainWindow: BrowserWindow
 var selectWindow: BrowserWindow
@@ -52,28 +47,11 @@ const createSelectWindow = () => {
 
   selectWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
   // selectWindow.webContents.openDevTools()
-  selectWindow.webContents.on('did-finish-load', () => {
-    selectWindow.webContents.send(IPC_RENDER_NAVIGATE_SELECTOR)
-  })
+
   return selectWindow
   // mainWindow.on('closed', () => {
   //   mainWindow = null
   // })
 }
 
-const showRepoSelector = () => {
-  selectWindow.show()
-
-  return new Promise<{ repoId: string; path: string } | false>(
-    (resolve, _reject) => {
-      ipcMain.once(IPC_REPO_SELECT, (_e, { repoId, path }) => {
-        resolve({ repoId, path })
-      })
-      ipcMain.once(IPC_CANCEL_SELECT, (_e) => {
-        resolve(false)
-      })
-    },
-  )
-}
-
-export { createAppWindow, createSelectWindow, showRepoSelector }
+export { createAppWindow, createSelectWindow }

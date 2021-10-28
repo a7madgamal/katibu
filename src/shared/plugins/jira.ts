@@ -3,7 +3,7 @@ import { IJiraTicket } from '../types/tickets'
 // @ts-ignore
 import electronTimber from 'electron-timber'
 import { settingsPlugin } from '../../main/plugins/settings'
-import { getActiveSettings } from '../helpers'
+import { getActiveSettingsProfile } from '../helpers'
 
 const logger = electronTimber.create({ name: 'PLUGIN:jira' })
 
@@ -29,7 +29,7 @@ const getMyTickets: () => Promise<Array<IJiraTicket> | false> = async () => {
   const state = getRendererStore().getState()
 
   try {
-    const activeSettings = getActiveSettings(state.settings)
+    const activeSettings = getActiveSettingsProfile(state.settings)
 
     const result: {
       issues: Array<IJiraTicket>
@@ -71,7 +71,7 @@ const getMyTickets: () => Promise<Array<IJiraTicket> | false> = async () => {
 // main
 const branchNameFromTicketId = async (issueKey: string) => {
   let issue
-  const { jiraEmail, jiraAuth, jiraHost } = getActiveSettings(
+  const { jiraEmail, jiraAuth, jiraHost } = getActiveSettingsProfile(
     settingsPlugin.getAll(),
   )
 
@@ -112,7 +112,9 @@ const ticketUrlFromKey = async (key: string) => {
 
   const state = getRendererStore().getState()
 
-  return `https://${getActiveSettings(state.settings).jiraHost}/browse/${key}`
+  return `https://${
+    getActiveSettingsProfile(state.settings).jiraHost
+  }/browse/${key}`
 }
 
 export { branchNameFromTicketId, getMyTickets, ticketUrlFromKey }

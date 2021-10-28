@@ -5,6 +5,7 @@ import {
   SAVE_SETTINGS,
   ISettingsState,
   ISettingsProfile,
+  UPDATE_DEFAULT_REPO,
 } from '../../types/settings'
 // @ts-ignore
 import electronTimber from 'electron-timber'
@@ -17,7 +18,6 @@ export const deleteSettings = (
   settings: ISettingsState,
   profileId: string,
 ): ThunkAction<void, TAppState, null, Action<string>> => async (dispatch) => {
-
   const oldProfileIndex = settings.profiles.findIndex(
     (profile) => profile.id === profileId,
   )
@@ -64,4 +64,28 @@ export const saveSettings = (
   })
 
   await ipcRenderer.invoke(IPC_RELOAD)
+}
+
+export const updateDefaultRepo = (
+  settings: ISettingsState,
+  defaultRepo: string,
+): ThunkAction<void, TAppState, null, Action<string>> => async (dispatch) => {
+  logger.log('updateDefaultRepo action', {
+    settings,
+  })
+
+  const oldProfileIndex = settings.profiles.findIndex(
+    (profile) => profile.id === settings.activeProfile,
+  )
+
+  settings.profiles[oldProfileIndex].defaultRepo = defaultRepo
+
+  await ipcRenderer.invoke(IPC_SAVE_SETTINGS, settings)
+
+  dispatch({
+    type: UPDATE_DEFAULT_REPO,
+    payload: { defaultRepo },
+  })
+
+  // await ipcRenderer.invoke(IPC_RELOAD)
 }

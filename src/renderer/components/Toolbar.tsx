@@ -6,13 +6,33 @@ import { jsx, css } from '@emotion/react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { ClickableBadgeStyle, BadgeStyle } from './styles'
+import { connect, ConnectedProps } from 'react-redux'
+import { TAppState } from '../../main/store'
+import { getActiveSettingsProfile } from '../../shared/helpers'
+import { updateDefaultRepo } from '../../shared/store/settings/actions'
 
-interface IToolbarProps {
-  onRefresh: () => void
-  isBusy: boolean
+const mapDispatch = {
+  updateDefaultRepoAction: updateDefaultRepo,
 }
 
-const Toolbar: React.FC<IToolbarProps> = ({ onRefresh, isBusy }) => {
+const connector = connect(
+  (state: TAppState) => ({
+    settings: state.settings,
+  }),
+  mapDispatch,
+)
+
+type ToolbarProps = {
+  onRefresh: () => void
+  isBusy: boolean
+} & ConnectedProps<typeof connector>
+
+const ToolbarInner: React.FC<ToolbarProps> = ({
+  onRefresh,
+  isBusy,
+  settings,
+  updateDefaultRepoAction,
+}) => {
   return (
     <div
       css={css`
@@ -32,7 +52,29 @@ const Toolbar: React.FC<IToolbarProps> = ({ onRefresh, isBusy }) => {
           flex-grow: 1;
         `}
       />
-
+      <div>
+        <select
+          name="active_repo"
+          id="active_repo"
+          onChange={(e) => {
+            updateDefaultRepoAction(settings, e.target.value)
+          }}
+        >
+          {settings &&
+            getActiveSettingsProfile(settings).reposList.map((repo) => (
+              <option
+                key={repo.repoId}
+                value={repo.repoId}
+                {...(repo.repoId ===
+                getActiveSettingsProfile(settings).defaultRepo
+                  ? { selected: true }
+                  : {})}
+              >
+                {repo.repoId}
+              </option>
+            ))}
+        </select>
+      </div>
       <Link
         to="/settings"
         css={css`
@@ -47,5 +89,7 @@ const Toolbar: React.FC<IToolbarProps> = ({ onRefresh, isBusy }) => {
     </div>
   )
 }
+
+const Toolbar = connector(ToolbarInner)
 
 export { Toolbar }
