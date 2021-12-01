@@ -4,7 +4,7 @@ import electronTimber from 'electron-timber'
 import { INITIAL_SETTINGS } from './constants'
 const logger = electronTimber.create({ name: '[SHARED:HELPERS]' })
 
-const getRepoSettingsFromId = async (repoId?: string) => {
+const getActiveRepoSettings = async () => {
   const isRenderer = process && process.type === 'renderer'
 
   let store
@@ -19,16 +19,14 @@ const getRepoSettingsFromId = async (repoId?: string) => {
   const state = store.getState()
   const activeSettingsProfile = getActiveSettingsProfile(state.settings)
 
-  const repoIdTest = repoId || activeSettingsProfile.defaultRepo
-
   const repo = activeSettingsProfile.reposList.find(
-    (repo) => repo.repoId === repoIdTest,
+    (repo) => repo.repoId === activeSettingsProfile.defaultRepo,
   )
 
   if (repo) {
     return repo
   } else {
-    throw new Error(`getRepoSettingsFromId failed in isRenderer:${isRenderer}`)
+    throw new Error(`getActiveRepoSettings failed in isRenderer:${isRenderer}`)
   }
 }
 
@@ -79,7 +77,7 @@ const areSettingsValid = (settings: ISettingsState) =>
   )
 
 export {
-  getRepoSettingsFromId,
+  getActiveRepoSettings,
   areSettingsValid,
   getActiveSettingsProfile,
   getProfileSettings,

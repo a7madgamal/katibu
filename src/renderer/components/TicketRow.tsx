@@ -43,7 +43,7 @@ import {
   IPC_DELETE_BRANCH,
   IPC_PUSH_BRANCH,
 } from '../../shared/constants'
-import { getRepoSettingsFromId } from '../../shared/helpers'
+import { getActiveRepoSettings } from '../../shared/helpers'
 
 interface ITicketRowProps {
   relatedPRs: Array<TExtendedPullRequest>
@@ -80,15 +80,15 @@ const TicketRow: React.FC<ITicketRowProps> = ({
             shell.openExternal(await ticketUrlFromKey(ticketData.key))
           }
           css={css`
-          ${BadgeStyle}
-          ${ClickableBadgeStyle}
-          background-color: ${
-            isActiveTicket ? ticketInProgressBGColor : ticketInactiveBGColor
-          };
-          color: ${
-            isActiveTicket ? ticketInProgressColor : ticketInactiveColor
-          };
-        `}
+            ${BadgeStyle}
+            ${ClickableBadgeStyle}
+          background-color: ${isActiveTicket
+              ? ticketInProgressBGColor
+              : ticketInactiveBGColor};
+            color: ${isActiveTicket
+              ? ticketInProgressColor
+              : ticketInactiveColor};
+          `}
         >
           <span
             css={css`
@@ -134,11 +134,9 @@ const TicketRow: React.FC<ITicketRowProps> = ({
             key={`${relatedBranch.repoId}_${relatedBranch.name}_${relatedBranch.isRemote}`}
             css={css`
               ${BadgeStyle}
-              color: ${
-                relatedBranch.isCheckedout
-                  ? activeCardAccentColor
-                  : actionsColor
-              };
+              color: ${relatedBranch.isCheckedout
+                ? activeCardAccentColor
+                : actionsColor};
               background-color: ${cardsBGColor};
               border: ${relatedBranch.isCheckedout ? '1' : '0'}px solid
                 ${relatedBranch.isCheckedout ? activeCardAccentColor : ''};
@@ -161,14 +159,13 @@ const TicketRow: React.FC<ITicketRowProps> = ({
               onClick={async () => {
                 if (relatedBranch.isRemote) {
                   shell.openExternal(
-                    generateNewOrCurrentPRLink({
-                      repoId: relatedBranch.repoId,
+                    await generateNewOrCurrentPRLink({
                       orgID: relatedBranch.orgID,
                       branchName: relatedBranch.name,
                     }),
                   )
                 } else {
-                  const path = await getRepoSettingsFromId(relatedBranch.repoId)
+                  const path = await getActiveRepoSettings()
 
                   shell.openExternal(`vscode://file${path.path}`)
                 }
@@ -188,7 +185,6 @@ const TicketRow: React.FC<ITicketRowProps> = ({
                 onClick={async () => {
                   ipcRenderer.invoke(
                     IPC_CHECKOUT_LOCAL_BRANCH,
-                    relatedBranch.repoId,
                     relatedBranch.name,
                   )
                 }}
@@ -202,11 +198,7 @@ const TicketRow: React.FC<ITicketRowProps> = ({
               <FontAwesomeIcon
                 icon={faExchangeAlt}
                 onClick={async () => {
-                  ipcRenderer.invoke(
-                    IPC_REBASE_BRANCH,
-                    relatedBranch.repoId,
-                    relatedBranch.name,
-                  )
+                  ipcRenderer.invoke(IPC_REBASE_BRANCH, relatedBranch.name)
                 }}
                 css={css`
                   ${ClickableBadgeStyle}
@@ -226,7 +218,6 @@ const TicketRow: React.FC<ITicketRowProps> = ({
                   })
 
                   const options: TPushTaskOptions = {
-                    repoId: relatedBranch.repoId,
                     skipChecks: result.response === 1,
                     branchName: relatedBranch.name,
                   }
@@ -272,20 +263,18 @@ const TicketRow: React.FC<ITicketRowProps> = ({
                 data-id="github-pr-key"
                 css={css`
                   ${BadgeStyle}
-                  background-color: ${
-                    mergeable_state === 'behind'
-                      ? '#F7BB2F'
-                      : mergeable_state === 'blocked' ||
-                        mergeable_state === 'dirty'
-                      ? checksStatus === CheckConclusion.success
-                        ? '#d0ffce'
-                        : checksStatus === CheckConclusion.failure
-                        ? '#F32C3E'
-                        : '#444'
-                      : mergeable_state === 'clean'
-                      ? '#7ABB6B'
-                      : cardsBGColor
-                  };
+                  background-color: ${mergeable_state === 'behind'
+                    ? '#F7BB2F'
+                    : mergeable_state === 'blocked' ||
+                      mergeable_state === 'dirty'
+                    ? checksStatus === CheckConclusion.success
+                      ? '#d0ffce'
+                      : checksStatus === CheckConclusion.failure
+                      ? '#F32C3E'
+                      : '#444'
+                    : mergeable_state === 'clean'
+                    ? '#7ABB6B'
+                    : cardsBGColor};
                 `}
               >
                 <FontAwesomeIcon

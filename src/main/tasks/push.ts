@@ -1,17 +1,15 @@
 import { showNotification } from '../../shared/plugins/notifications'
 import { pushBranch } from '../plugins/git'
-import { getRepoSettingsFromId } from '../../shared/helpers'
+import { getActiveRepoSettings } from '../../shared/helpers'
 
 const pushTask = async ({
-  repoId,
   skipChecks,
   branchName,
 }: {
-  repoId: string
   skipChecks?: boolean
   branchName?: string
 }) => {
-  const repoSettings = await getRepoSettingsFromId(repoId)
+  const repoSettings = await getActiveRepoSettings()
 
   if (repoSettings) {
     const pushingNotification = showNotification(

@@ -39,10 +39,7 @@ export const fetchGit = (): ThunkAction<
       continue
     }
 
-    const branches: BranchSummary = await ipcRenderer.invoke(
-      IPC_GET_BRANCHES,
-      repo.repoId,
-    )
+    const branches: BranchSummary = await ipcRenderer.invoke(IPC_GET_BRANCHES)
 
     if (branches) {
       for (const [name, branch] of Object.entries(branches.branches)) {
@@ -97,15 +94,9 @@ export const fetchGit = (): ThunkAction<
           })
 
           if (deleteResult) {
-            await ipcRenderer.invoke(
-              IPC_CHECKOUT_LOCAL_BRANCH,
-              oldRemoteBranches[i].repoId,
-              'master',
-            )
-            await ipcRenderer.invoke(
-              IPC_PULL_BRANCH,
-              oldRemoteBranches[i].repoId,
-            )
+            // todo: get main branch name from settings or repo
+            await ipcRenderer.invoke(IPC_CHECKOUT_LOCAL_BRANCH, 'master')
+            await ipcRenderer.invoke(IPC_PULL_BRANCH)
           }
         },
       )

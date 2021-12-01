@@ -14,7 +14,7 @@ import { Toolbar } from './components/Toolbar'
 import { TicketRow } from './components/TicketRow'
 import { RouteComponentProps } from 'react-router'
 import { BadgeStyle } from './components/styles'
-import { areSettingsValid } from '../shared/helpers'
+import { areSettingsValid, getActiveSettingsProfile } from '../shared/helpers'
 
 const mapState = (state: TAppState) => ({
   tickets: state.tickets,
@@ -41,6 +41,7 @@ const app: React.FC<TAppProps> = ({
   fetchGitAction,
   history,
 }) => {
+  const repoSettings = getActiveSettingsProfile(settings)
   const fetchData = (isFirstTime: boolean) => {
     if (areSettingsValid(settings)) {
       fetchTicketsAction(isFirstTime)
@@ -115,11 +116,14 @@ const app: React.FC<TAppProps> = ({
             []
 
           const relatedBranches =
-            branches.branches.filter((branch) =>
-              branch.name
-                .toLowerCase()
-                .startsWith(ticketData.key.toLowerCase()),
-            ) || []
+            branches.branches.filter((branch) => {
+              return (
+                branch.name
+                  .toLowerCase()
+                  .startsWith(ticketData.key.toLowerCase()) &&
+                branch.repoId === repoSettings.defaultRepo
+              )
+            }) || []
 
           return (
             <TicketRow

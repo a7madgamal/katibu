@@ -7,7 +7,7 @@ import express from 'express'
 import { okk } from '../helpers'
 // @ts-ignore
 import electronTimber from 'electron-timber'
-import { getRepoSettingsFromId } from '../../shared/helpers'
+import { getActiveRepoSettings } from '../../shared/helpers'
 
 const logger = electronTimber.create({ name: 'server' })
 
@@ -86,7 +86,7 @@ const startServer = () => {
             const branchName = okk(pull.data.head.ref)
             okk(branchName)
 
-            const repoSettings = await getRepoSettingsFromId(pr.repo)
+            const repoSettings = await getActiveRepoSettings()
 
             await createBranch(
               repoSettings.path,

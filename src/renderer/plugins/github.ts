@@ -6,7 +6,7 @@ import {
   CheckConclusion,
 } from '../../shared/types'
 import {
-  getRepoSettingsFromId,
+  getActiveRepoSettings,
   getActiveSettingsProfile,
 } from '../../shared/helpers'
 
@@ -18,7 +18,7 @@ const updatePR = async (repoId: string, pullNumber: number) => {
     auth: getActiveSettingsProfile(state.settings).githubAuth,
   })
 
-  const repoSettings = await getRepoSettingsFromId(repoId)
+  const repoSettings = await getActiveRepoSettings()
 
   octokit.pulls.updateBranch({
     owner: repoSettings.orgID,
@@ -38,7 +38,7 @@ const _getMyPRs = async (repoId: string, options = {}) => {
     auth: getActiveSettingsProfile(state.settings).githubAuth,
   })
 
-  const repoSettings = await getRepoSettingsFromId(repoId)
+  const repoSettings = await getActiveRepoSettings()
 
   // todo: try to filter by user in options
   const { data: pulls } = await octokit.pulls.list({
@@ -63,7 +63,7 @@ const _getMyPRs = async (repoId: string, options = {}) => {
 // renderer
 const _extendPRs = async (repoId: string, pulls: TPullRequest) => {
   const state = getRendererStore().getState()
-  const repoSettings = await getRepoSettingsFromId(repoId)
+  const repoSettings = await getActiveRepoSettings()
 
   const extendedPRs: Array<TExtendedPullRequest> = []
 
@@ -133,15 +133,14 @@ const getPR = async (owner: string, repo: string, prNumber: number) => {
 }
 
 // renderer
-const generateNewOrCurrentPRLink = ({
+const generateNewOrCurrentPRLink = async ({
   orgID,
-  repoId,
   branchName,
 }: {
   orgID: string
-  repoId: string
   branchName: string
 }) => {
+  const repoSettings = await getActiveRepoSettings()
   const branchNameArray = branchName.split('-')
 
   const ticketID = `${branchNameArray
@@ -159,7 +158,9 @@ const generateNewOrCurrentPRLink = ({
   if (hasPR) {
     return hasPR.html_url
   } else {
-    return `https://github.com/${orgID}/${repoId}/compare/${branchName}?expand=1&title=${ticketID}: ${branchNameArray.join(
+    return `https://github.com/${orgID}/${
+      repoSettings.repoId
+    }/compare/${branchName}?expand=1&title=${ticketID}: ${branchNameArray.join(
       ' ',
     )}`
   }

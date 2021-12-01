@@ -19,7 +19,7 @@ import {
 
 // import { setContextMenu } from '../plugins/tray'
 import { settingsPlugin } from './plugins/settings'
-import { createAppWindow, createSelectWindow } from './plugins/windows'
+import { createAppWindow } from './plugins/windows'
 import {
   getRepoFromPath,
   getRemote,
@@ -42,8 +42,6 @@ import {
   IPC_REBASE_BRANCH,
   IPC_DELETE_BRANCH,
   IPC_PUSH_BRANCH,
-  IPC_CANCEL_SELECT,
-  IPC_HIDE_SELECT,
   IPC_RENDER_REFRESH_TICKETS,
   IPC_RENDER_REFRESH_GIT,
   IPC_RENDER_REFRESH_PRS,
@@ -59,7 +57,7 @@ import {
 import { getMainStore } from './store'
 import { LOAD_SETTINGS } from '../shared/types/settings'
 import { TimeTracker } from './plugins/timer'
-import { getProfileSettings } from '../shared/helpers'
+import { getActiveRepoSettings, getProfileSettings } from '../shared/helpers'
 
 const logger = electronTimber.create({ name: 'index' })
 
@@ -67,7 +65,6 @@ const logger = electronTimber.create({ name: 'index' })
 // require('update-electron-app')()
 
 var mainWindow: BrowserWindow
-var selectWindow: BrowserWindow
 
 app.on('ready', () => {
   // electronDevtoolsInstaller(REACT_DEVELOPER_TOOLS)
@@ -87,7 +84,6 @@ app.on('ready', () => {
   store.dispatch({ type: LOAD_SETTINGS, payload })
 
   mainWindow = createAppWindow()
-  selectWindow = createSelectWindow()
   // setContextMenu()
   if (getProfileSettings(payload, payload.activeProfile).isTimeTrackerEnabled) {
     var timeTracker = new TimeTracker()
@@ -141,6 +137,13 @@ function registerShortcuts() {
   globalShortcut.register('Alt+z', () => {
     mainWindow.show()
   })
+
+  globalShortcut.register('CommandOrControl+Shift+Up', async () => {
+    const branches = await getBranches()
+    const branchName = branches.current
+
+    await pushTask({ skipChecks: false, branchName })
+  })
   // )
 }
 
@@ -150,8 +153,8 @@ ipcMain.handle(IPC_SAVE_SETTINGS, async (_e, settings) => {
   return true
 })
 
-ipcMain.handle(IPC_GET_BRANCHES, async (_e, repoId: string) => {
-  const branches = await getBranches(repoId)
+ipcMain.handle(IPC_GET_BRANCHES, async (_e) => {
+  const branches = await getBranches()
 
   return branches
 })
@@ -187,28 +190,27 @@ ipcMain.handle(IPC_CREATE_BRANCH, async (_e, key: string) => {
   }
 })
 
-ipcMain.handle(
-  IPC_DELETE_BRANCH,
-  async (_e, { repoId, branchName, isRemote }) => {
-    const result = await deleteBranch(repoId, branchName, isRemote, false)
+ipcMain.handle(IPC_DELETE_BRANCH, async (_e, { branchName, isRemote }) => {
+  const result = await deleteBranch(branchName, isRemote, false)
 
-    mainWindow.webContents.send(IPC_RENDER_REFRESH_PRS)
-    mainWindow.webContents.send(IPC_RENDER_REFRESH_GIT)
-    return result
-  },
-)
+  mainWindow.webContents.send(IPC_RENDER_REFRESH_PRS)
+  mainWindow.webContents.send(IPC_RENDER_REFRESH_GIT)
+  return result
+})
 
-ipcMain.handle(IPC_REBASE_BRANCH, async (_e, repoId, branchName) => {
+ipcMain.handle(IPC_REBASE_BRANCH, async (_e, branchName) => {
+  const repoSettings = await getActiveRepoSettings()
+
   try {
-    await rebaseLocalBranch(repoId, branchName)
+    await rebaseLocalBranch(branchName)
     showNotification({
       title: 'branch rebased',
-      body: `${repoId}:${branchName}`,
+      body: `${repoSettings.repoId}:${branchName}`,
     })
   } catch (error) {
     showNotification({
       title: 'branch rebase failed',
-      body: `${repoId}:${branchName}`,
+      body: `${repoSettings.repoId}:${branchName}`,
     })
   }
 
@@ -217,47 +219,36 @@ ipcMain.handle(IPC_REBASE_BRANCH, async (_e, repoId, branchName) => {
 
 ipcMain.handle(
   IPC_PUSH_BRANCH,
-  async (
-    _e,
-    { repoId, skipChecks, branchName }: Parameters<typeof pushTask>[0],
-  ) => {
-    await pushTask({ repoId, skipChecks, branchName })
+  async (_e, { skipChecks, branchName }: Parameters<typeof pushTask>[0]) => {
+    await pushTask({ skipChecks, branchName })
     mainWindow.webContents.send(IPC_RENDER_REFRESH_GIT)
   },
 )
 
-ipcMain.handle(IPC_PULL_BRANCH, async (_e, repoId) => {
-  await pullActiveBranch(repoId)
+ipcMain.handle(IPC_PULL_BRANCH, async (_e) => {
+  await pullActiveBranch()
 })
 
-ipcMain.handle(IPC_CHECKOUT_LOCAL_BRANCH, async (_e, repoId, branchName) => {
-  const success = await checkoutLocalBranch(repoId, branchName)
+ipcMain.handle(IPC_CHECKOUT_LOCAL_BRANCH, async (_e, branchName) => {
+  const repoSettings = await getActiveRepoSettings()
+  const success = await checkoutLocalBranch(branchName)
 
   if (success) {
     showNotification({
       title: 'checked out branch',
-      body: `${repoId}:${branchName}`,
+      body: `${repoSettings.repoId}:${branchName}`,
     })
   } else {
     showNotification({
       title: 'failed to checkout branch',
-      body: `${repoId}:${branchName}`,
+      body: `${repoSettings.repoId}:${branchName}`,
     })
   }
 
   mainWindow.webContents.send(IPC_RENDER_REFRESH_GIT)
 })
 
-ipcMain.on(IPC_HIDE_SELECT, () => {
-  selectWindow.hide()
-})
-
-ipcMain.handle(IPC_CANCEL_SELECT, () => {
-  selectWindow.hide()
-})
-
 ipcMain.handle(IPC_RELOAD, () => {
-  selectWindow.reload()
   mainWindow.webContents.send(IPC_RENDER_NAVIGATE_HOME)
 })
 
@@ -305,7 +296,7 @@ process.on('uncaughtException', (error) => {
 //     createAppWindow()
 //   }
 // })
-// export { mainWindow, selectWindow }
+// export { mainWindow }
 
 // powerMonitor.on('suspend', () => {
 //   console.log('powerMonitor suspend')
