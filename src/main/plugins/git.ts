@@ -169,7 +169,7 @@ const getBranches = async () => {
 const createBranch = async (
   repoPath: string,
   title: string,
-  fromBranch = 'master',
+  fromBranch: string,
 ) => {
   const repo = git(okk(repoPath))
 
@@ -224,7 +224,7 @@ const createBranchFromTicketId = async (ticketId: string) => {
     const newBranchName = await branchNameFromTicketId(ticketId)
     const settings = await getActiveRepoSettings()
 
-    await createBranch(okk(settings.path), okk(newBranchName))
+    await createBranch(okk(settings.path), okk(newBranchName), 'master')
 
     return true
   } catch (e) {
